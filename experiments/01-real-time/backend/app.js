@@ -19,7 +19,7 @@ io.on("connection", (socket) => {
     socket.on("message", (msg) => {
         console.log("message " + msg);
 
-        io.emit("message", msg);
+        io.emit("message", msg.toUpperCase());
     });
 
     socket.on("disconnect", () =>{
