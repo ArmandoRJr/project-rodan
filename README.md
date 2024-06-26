@@ -18,6 +18,7 @@ The application will...
 - be built using Angular (and be a Single Page Application)
 - use Express as the core backend API
 - make use of REST
+- utilize Postgres as the database layer (with Sequelize as our ORM)
 - be deployed on a VM using Docker and Docker Composer using proper CI/CD
 - be accessible to the general public through use of a public domain
 - interact with Google Cloud (Vision AI) and OpenAI's API(s)
