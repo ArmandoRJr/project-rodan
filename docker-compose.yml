@@ -1,0 +1,43 @@
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+      - ./acme:/etc/acme.sh
+    volumes_from:
+      - nginx-proxy
+    environment:
+      - DEFAULT_EMAIL=armando.rc.jr@gmail.com
+  frontend:
+    image: ghcr.io/utsc-cscc09-programming-on-the-web/rodan-frontend-armandorjr
+    container_name: frontend
+    restart: always
+    expose:
+      - 80
+    environment:
+      - VIRTUAL_HOST=rodan.armandorojas.me
+      - LETSENCRYPT_HOST=rodan.armandorojas.me
+  backend:
+    image: ghcr.io/utsc-cscc09-programming-on-the-web/rodan-backend-armandorjr
+    container_name: backend
+    restart: always
+    expose:
+      - 3000
+    environment:
+      - VIRTUAL_HOST=api.rodan.armandorojas.me
+      - LETSENCRYPT_HOST=api.rodan.armandorojas.me

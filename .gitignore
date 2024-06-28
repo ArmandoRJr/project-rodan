@@ -10,3 +10,6 @@ db
 
 # Secrets
 .env
+
+# Build
+dist/
