@@ -7,7 +7,7 @@ import cors from "cors";
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:4200",
+  origin: "https://rodan.armandorojas.me/",
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -17,7 +17,7 @@ const server = http.createServer(app);
 //Start up socket.io
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:4200",
+    origin: "https://rodan.armandorojas.me/",
     credentials: true,
   },
 });
