@@ -1,6 +1,7 @@
 // src/app/app.component.ts
 import { Component, OnInit } from "@angular/core";
 import { io, Socket } from "socket.io-client";
+import { environment } from "../environments/environment";
 
 @Component({
   selector: "app-root",
@@ -13,7 +14,7 @@ export class AppComponent implements OnInit {
   messages: string[] = [];
 
   constructor() {
-    this.socket = io("https://api.rodan.armandorojas.me");
+    this.socket = io(environment.apiEndpoint);
   }
 
   ngOnInit(): void {
