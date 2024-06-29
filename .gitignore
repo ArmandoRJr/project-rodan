@@ -13,3 +13,4 @@ db
 
 # Build
 dist/
+cache/

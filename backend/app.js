@@ -6,8 +6,13 @@ import cors from "cors";
 //Initialize the express application and a server from that application
 const app = express();
 
+const environment = process.env.NODE_ENV;
+
 const corsOptions = {
-  origin: "https://rodan.armandorojas.me/",
+  origin:
+    environment === "production"
+      ? "https://rodan.armandorojas.me"
+      : "http://localhost:4200",
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -17,7 +22,10 @@ const server = http.createServer(app);
 //Start up socket.io
 const io = new Server(server, {
   cors: {
-    origin: "https://rodan.armandorojas.me/",
+    origin:
+      environment === "production"
+        ? "https://rodan.armandorojas.me"
+        : "http://localhost:4200",
     credentials: true,
   },
 });
@@ -41,6 +49,14 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     users--;
     console.log("user disconnected");
+  });
+});
+
+app.get("/test", async (req, res) => {
+  res.json({
+    message: `This is a test. We are on ${environment}; ${
+      environment === "production"
+    }`,
   });
 });
 
