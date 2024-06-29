@@ -1,0 +1,40 @@
+name: Docker Compose Deployment
+
+on:
+  push:
+    # Only run this workflow if it is a commit to main.
+    branches:
+      - main
+    # Only run this workflow if the commit has modified the main Compose file
+    paths:
+      - docker-compose.yml
+
+jobs:
+  # Push image to GitHub Packages.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Go to VM and copy Compose file
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          source: "docker-compose.yml"
+          target: ./
+
+      - name: Pull + run Docker images
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script_stop: true
+          script: docker compose pull && docker compose up -d
