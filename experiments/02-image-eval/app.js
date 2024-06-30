@@ -10,19 +10,9 @@ import prompts from "./prompts.js";
 
 const VISION_API_SETTINGS = JSON.parse(process.env.VISION_API_SETTINGS);
 
-/* 
-  Requires either proper Vision API settings
-  or default credentials in Gcloud console:
-  
-  For default credentials:
-  1. First go through this (Before you begin; do Local Shell):
-  https://cloud.google.com/vision/docs/detect-labels-image-client-libraries
-  2. then add default credentials as shown in the first answer here
-  https://stackoverflow.com/questions/42043611
-  (the `gcloud auth application-default login` command)
-*/
-
-const client = new v1.ImageAnnotatorClient();
+const client = new v1.ImageAnnotatorClient({
+  credentials: VISION_API_SETTINGS,
+});
 
 const PORT = 3000;
 export const app = express();
