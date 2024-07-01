@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SocketService } from '../../services/socket.service';
 
+//Component for a player to upload images for the game
 @Component({
     selector: 'app-image-upload',
     templateUrl: './image-upload.component.html',
