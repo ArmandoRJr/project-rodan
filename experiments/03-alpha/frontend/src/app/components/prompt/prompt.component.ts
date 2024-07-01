@@ -10,7 +10,7 @@ import { SocketService } from '../../services/socket.service';
     styleUrls: ['./prompt.component.css']
 
 })
-export class promptComponent implements OnInit {
+export class PromptComponent implements OnInit {
     prompt: string;
 
     constructor(private socketService: SocketService) { }

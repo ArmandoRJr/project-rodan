@@ -1,14 +1,11 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import cors from "cors";
 import bodyParser from "body-parser";
 import multer from "multer";
 import "dotenv/config";
 import fs from "fs";
 import { v1 } from "@google-cloud/vision";
-import fetch from "node-fetch";
-
 import fetch from "node-fetch";
 
 import prompts from "./prompts.js";
