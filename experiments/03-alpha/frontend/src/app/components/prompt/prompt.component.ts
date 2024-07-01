@@ -1,6 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
-import { SocketService } from '../services/socket.service';
+import { SocketService } from '../../services/socket.service';
+
+//The prompt component for the game
 
 @Component({
     selector: 'app-prompt',
