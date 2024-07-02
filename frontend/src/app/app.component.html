@@ -1,23 +1,7 @@
-<div style="text-align:center">
+<div style="text-align: center">
   <h1>Welcome to Rodan</h1>
 </div>
 
-<div>
-  <h2 style="text-align: center;">Experimental</h2>
-  <div style="text-align: center;">
-    <input 
-      [(ngModel)]="message" 
-      placeholder="Enter message" 
-      required 
-      style="width: 300px; height: 30px;" 
-    />
-  </div>
-  <div style="margin-top: 10px; text-align: center;">
-    <button (click)="sendMessage()" [disabled]="!message.trim()">Submit</button>
-  </div>
-  <div>
-    <ul>
-      <li *ngFor="let msg of messages">{{ msg }}</li>
-    </ul>
-  </div>
-</div>
+<section>
+  <router-outlet></router-outlet>
+</section>
