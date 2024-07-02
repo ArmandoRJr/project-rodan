@@ -42,3 +42,4 @@ services:
       - VIRTUAL_HOST=api.rodan.armandorojas.me
       - LETSENCRYPT_HOST=api.rodan.armandorojas.me
       - NODE_ENV=production
+    env_file: "backend.env"
