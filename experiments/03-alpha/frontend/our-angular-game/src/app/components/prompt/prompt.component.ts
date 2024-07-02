@@ -11,7 +11,7 @@ import { SocketService } from '../../services/socket.service';
 
 })
 export class PromptComponent implements OnInit {
-    prompt: string;
+    prompt: string = "";
 
     constructor(private socketService: SocketService) { }
 

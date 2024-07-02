@@ -21,6 +21,6 @@ import { SocketService } from './services/socket.service';
         FormsModule
     ],
     providers: [SocketService, provideHttpClient()],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
 export class AppModule { }

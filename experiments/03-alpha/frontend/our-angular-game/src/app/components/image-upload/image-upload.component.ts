@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SocketService } from '../../services/socket.service';
 
+
+
 //Component for a player to upload images for the game
 @Component({
     selector: 'app-image-upload',
@@ -9,17 +11,18 @@ import { SocketService } from '../../services/socket.service';
     styleUrls: ['./image-upload.component.css']
 })
 export class ImageUploadComponent {
-    selectedFile: File;
+    selectedFile: File | null = null;
 
     constructor(private http: HttpClient, private socketService: SocketService) { }
 
-    onFileSelected(event) {
-        this.selectedFile = event.target.files[0];
+    onFileSelected(event: Event) {
+        const inputTarget = event.target! as HTMLInputElement; //Had to do some weird fixes here because typescript kept whining. Maybe you have a better solution idk
+        this.selectedFile = inputTarget!.files![0]!;
     }
 
     onUpload(){
         const formData = new FormData();
-        formData.append('picture', this.selectedFile);
+        formData.append('picture', this.selectedFile!); //same for here
         formData.append('promptId', '');
         formData.append('playerId', this.socketService.socket.id!); //Note: I am using ! here to cast this as a string because o/w I get a typescript 'Type 'string | undefined' is not assignable to type 'string'' error
 

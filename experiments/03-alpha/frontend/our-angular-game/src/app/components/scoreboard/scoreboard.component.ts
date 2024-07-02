@@ -10,7 +10,7 @@ import { SocketService } from '../../services/socket.service';
 })
 export class ScoreboardComponent implements OnInit {
     scores: any = {};
-    winner: string;
+    winner: string = "";
 
     constructor(private socketService: SocketService) { }
 

@@ -7,6 +7,7 @@ import "dotenv/config";
 import fs from "fs";
 import { v1 } from "@google-cloud/vision";
 import fetch from "node-fetch";
+import cors from "cors";
 
 import prompts from "./prompts.js";
 
