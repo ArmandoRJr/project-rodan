@@ -1,0 +1,25 @@
+<div>
+  <h2 style="text-align: center">Experimental</h2>
+  <p style="text-align: center">{{ warning }}</p>
+  <form [formGroup]="messageForm" (submit)="sendMessage()">
+    <div style="text-align: center">
+      <input
+        formControlName="message"
+        placeholder="Enter message"
+        required
+        style="width: 300px; height: 30px"
+      />
+    </div>
+    <div style="margin-top: 10px; text-align: center">
+      <button type="submit" [disabled]="!messageForm.value.message?.trim()">
+        Submit
+      </button>
+    </div>
+  </form>
+
+  <div>
+    <ul>
+      <li *ngFor="let msg of messages">{{ msg }}</li>
+    </ul>
+  </div>
+</div>

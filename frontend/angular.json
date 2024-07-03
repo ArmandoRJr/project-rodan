@@ -3,19 +3,9 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Rodan": {
+    "rodan": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "standalone": false
-        },
-        "@schematics/angular:directive": {
-          "standalone": false
-        },
-        "@schematics/angular:pipe": {
-          "standalone": false
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -71,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Rodan:build:production"
+              "buildTarget": "rodan:build:production"
             },
             "development": {
-              "buildTarget": "Rodan:build:development"
+              "buildTarget": "rodan:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -99,8 +89,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "analytics": false
   }
 }

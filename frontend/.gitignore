@@ -1,17 +1,5 @@
-# OS Files
-Thumbs.db
-.DS_Store
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# node.js
-node_modules/
-uploads
-db
-*.sqlite
-
-# Secrets
-.env
-
-# --- Angular ---
 # Compiled output
 /dist
 /tmp
