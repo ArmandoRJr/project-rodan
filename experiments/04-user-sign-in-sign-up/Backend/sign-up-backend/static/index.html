@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Image Gallery</title>
+    <link rel="stylesheet" type="text/css" href="styles/cols.css" />
+    <link rel="stylesheet" type="text/css" href="styles/styles.css" />
+  </head>
+  <body>
+    <header class="row title">Image Gallerys</header>
+    <div class="row">
+      <div class="col-7 col-sm-12 image-display">
+        Sorry, there are currently no images in your gallery.
+      </div>
+      <div class="col-5 col-sm-12 comments-section"></div>
+    </div>
+    <div class="row">
+      <div class="col-3"></div>
+      <div class="col-5">
+        <form
+          id="add-image-form"
+          class="complex-form add-image-form"
+          enctype="multipart/form-data"
+          method="post"
+        >
+          <input
+            name="title"
+            id="newImageTitle"
+            class="new-image-title form-element"
+            type="text"
+            placeholder="Image Title Goes Here"
+            required
+          />
+          <input
+            type="file"
+            name="picture"
+            id="picture"
+            class="new-image form-element"
+            required
+          />
+          <input
+            id="submitImage"
+            type="submit"
+            class="btn btn-blue submit-image-btn"
+            value="Submit"
+          />
+        </form>
+        <button class="btn btn-toggle-image">Hide</button>
+        <div class="auth-forms">
+          <form id="signup-form" class="hidden signup-form">
+            <h2>Sign Up</h2>
+            <input
+              type="text"
+              id="signup-username"
+              class="signup-username"
+              placeholder="Username"
+              required
+            />
+            <input
+              type="password"
+              id="signup-password"
+              class="signup-password"
+              placeholder="Password"
+              required
+            />
+            <button type="submit">Sign Up</button>
+          </form>
+          <button id="auth-toggle" class="btn auth-toggle">
+            Log In/Sign Up
+          </button>
+          <button class="btn log-out-button">Log Out</button>
+
+          <div id="auth-form" class="complex-form auth-form">
+            <h2>Authentication</h2>
+            <input type="text" class="auth-username" placeholder="Username" />
+            <input
+              type="password"
+              class="auth-password"
+              placeholder="Password"
+            />
+            <button class="btn log-in-button">Log In</button>
+            <button class="btn sign-up-button">Sign Up</button>
+            <div class="auth-message"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4 users-section">
+        <div>Users:</div>
+        <ul id="users-list" class="users-list"></ul>
+        <button class="btn btn-next-users">Next</button>
+        <button class="btn btn-previous-users">Prev</button>
+      </div>
+    </div>
+    <button class="btn credits-btn">Credits</button>
+
+    <div class="credits-text">
+      <ul>
+        <li>
+          Thanks to github copilot for helping me with a lot of the code,
+          including deleting files and handling the cursor based pagination
+        </li>
+
+        <li>
+          Thanks to W3Schools for helping me with the loading animation. Link
+          here: https://www.w3schools.com/howto/howto_css_loader.asp
+        </li>
+
+        <li>
+          Thanks to Thierry/Cho for the Lab 5 code, for which I based most of my
+          assignment off of
+        </li>
+      </ul>
+    </div>
+  </body>
+
+  <script src="js/api-service.js"></script>
+  <script src="js/index.js"></script>
+</html>
