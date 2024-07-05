@@ -1,0 +1,25 @@
+<div *ngIf="roomData">
+  <h2>Room Data</h2>
+  <pre>{{ roomData | json }}</pre>
+</div>
+
+<div *ngIf="roundData">
+  <h2>Round {{ roundData.round }}</h2>
+  <p>
+    Submit your picture before {{ roundData.endTime | date : "mediumTime" }}
+  </p>
+  <!-- <form *ngIf="isPlayer" [formGroup]="imageForm" (submit)="submitPicture">
+        <input type="file" formControlName="image">
+        <button type="submit">Submit Picture</button>
+    </form> -->
+  <input type="file" (change)="submitPicture($event)" />
+
+  <p *ngIf="isSpectator">
+    You are a spectator. You can watch the game but not participate.
+  </p>
+</div>
+
+<div *ngIf="scores">
+  <h2>Scores</h2>
+  <pre>{{ scores | json }}</pre>
+</div>
