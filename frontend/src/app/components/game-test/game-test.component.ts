@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { io } from 'socket.io-client';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-game-test',
@@ -24,7 +25,7 @@ export class GameTestComponent implements OnInit {
   });
 
   constructor() {
-    this.socket = io('http://localhost:3000');
+    this.socket = io(environment.apiEndpoint);
     this.userId = this.socket.id ?? '';
   }
 
@@ -66,15 +67,13 @@ export class GameTestComponent implements OnInit {
 
   submitPicture(picture: Event) {
     const input = picture.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.socket.emit('submitPicture', 'someRoomId', file);
+    if (this.isPlayer) {
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        this.socket.emit('submitPicture', 'someRoomId', file);
+      }
+    } else {
+      alert('Spectators cannot submit pictures.');
     }
-    console.log(picture);
-    // if (this.isPlayer) {
-    //   this.socket.emit('submitPicture', 'someRoomId', picture);
-    // } else {
-    //   alert('Spectators cannot submit pictures.');
-    // }
   }
 }
