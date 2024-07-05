@@ -1,0 +1,298 @@
+/*Defining the font, background color, etc for the body and header  */
+body {
+  font-family: "Courier New", Courier, monospace;
+  background-color: #2e2e2e;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  width: 100%;
+  text-align: center;
+  background-color: #ff77ff;
+  color: #ffffff;
+  padding: 3rem;
+  font-size: 2rem;
+  font-weight: bold;
+  border-bottom: 4px solid #ffccff;
+}
+
+/* Defining attributes for image display */
+.image-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem auto;
+  padding: 2rem 2rem 2rem 2rem;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  border: 2px solid #ff77ff;
+  box-shadow: 0 0 10px 0 #ff77ff;
+  word-wrap: break-word;
+}
+
+.image-display img {
+  max-width: 600px;
+  max-height: 600px;
+  height: auto;
+  width: auto;
+  border: 2px solid #ff77ff;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.image-display img:hover {
+  transform: scale(1.05);
+}
+
+.image-display p {
+  margin: 0.5rem;
+}
+
+/* defining display for comments */
+
+.comments-section {
+  background-color: #1e1e1e;
+  border: 2px solid #ff77ff;
+  border-radius: 10px;
+  margin: 2rem auto;
+  padding: 1rem;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 10px #ff77ff;
+}
+
+.users-section {
+  background-color: #1e1e1e;
+  border: 2px solid #ff77ff;
+  border-radius: 10px;
+  margin: 2rem auto;
+  padding: 1rem;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 10px #ff77ff;
+}
+
+.comments-section input,
+.comments-section button {
+  width: calc(100% - 2rem);
+  padding: 0.5rem;
+  margin: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+.comments-section input {
+  background-color: #ffccff;
+  color: #2e2e2e;
+}
+
+.comments-section button {
+  background-color: #ff77ff;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.comments-section button:hover {
+  background-color: #ff55ff;
+}
+
+.comments-list {
+  margin-top: 1rem;
+}
+
+.comment {
+  background-color: #2e2e2e;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  border: 1px solid #ff77ff;
+  word-wrap: break-word;
+}
+
+.comment-user,
+.comment-content,
+.comment-date {
+  padding: 0.5rem;
+}
+
+.comments-section {
+  animation: slideIn 0.5s ease-in-out;
+}
+
+.message-username {
+  font-weight: bold;
+  color: #ffccff;
+}
+
+.auth-form,
+#add-image-form {
+  background-color: #1e1e1e;
+  border: 2px solid #ff77ff;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  box-shadow: 0 0 10px #ff77ff;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.auth-form,
+#add-image-form input[type="text"] {
+  width: calc(100% - 2rem);
+  padding: 0.5rem;
+  margin: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 1px solid #ffccff;
+  background-color: #2e2e2e;
+  color: #ffffff;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.auth-form,
+#add-image-form input[type="text"]:focus {
+  border-color: #ff77ff;
+}
+
+.auth-form,
+#add-image-form input[type="submit"] {
+  width: calc(100% - 2rem);
+  padding: 0.5rem;
+  margin: 1rem;
+  border-radius: 5px;
+  border: none;
+  background-color: #ff77ff;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-form,
+#add-image-form input[type="submit"]:hover {
+  background-color: #ff55ff;
+}
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+.btn-toggle-image {
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: 2px solid #ff77ff;
+  background-color: #1e1e1e;
+  color: #ff77ff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/*Stuff for buttons */
+.btn-toggle-image:hover {
+  background-color: #2e2e2e;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.log-in-button,
+.btn-delete-image,
+.btn-next-image,
+.btn-previous-image,
+.btn-delete-comment,
+.btn-next-comments,
+.btn-previous-comments,
+.btn-toggle-image {
+  background-color: #ff77ff;
+  color: #ffffff;
+}
+
+.btn:hover {
+  background-color: #ff55ff;
+}
+
+.btn:disabled {
+  background-color: #555555;
+  color: #aaaaaa;
+  border-color: #555555;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+#users-list {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #1e1e1e;
+  border: 2px solid #ff77ff;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  box-shadow: 0 0 10px #ff77ff;
+  list-style-type: none;
+}
+
+#users-list li {
+  background-color: #2e2e2e;
+  border: 1px solid #ff77ff;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#users-list li:hover {
+  background-color: #ff77ff;
+  color: #ffffff;
+}
+
+/* Animations stuff because we have to have this on the assignment. The keyframes define the animation used in certain elements, like the images sliding/fading in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
