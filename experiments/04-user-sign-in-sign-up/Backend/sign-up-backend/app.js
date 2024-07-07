@@ -1,18 +1,23 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { sequelize } from "./datasource.js";
-import { imageRouter } from "./routers/image_router.js";
-import { commentRouter } from "./routers/comment_router.js";
 import { userRouter } from "./routers/user_router.js";
 import { Token } from "./models/tokens.js";
+import cors from "cors";
 
 export const app = express();
 const PORT = 3000;
 
 // app.js
 
+//const corsOptions = {
+  //origin: "http://localhost:4200/",
+  //credentials: true
+//};
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(express.static("static"));
 
@@ -40,8 +45,7 @@ const authenticateToken = async (req, res, next) => {
   next();
 };
 
-app.use("/api/images/", imageRouter);
-app.use("/api/comments/", authenticateToken, commentRouter);
+
 app.use("/api/users/", userRouter);
 
 try {

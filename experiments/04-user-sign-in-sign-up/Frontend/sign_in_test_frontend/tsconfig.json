@@ -4,6 +4,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
+    "noImplicitAny": false, //short term fix for the compiler whining about implictly "any" for GoogleUser object, will see how to do a better fix later
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
