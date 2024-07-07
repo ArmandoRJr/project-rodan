@@ -51,44 +51,122 @@ const client = new v1.ImageAnnotatorClient({
   credentials: VISION_API_SETTINGS,
 });
 
+// WebSocket constants
+// [TO BE UPDATED LATER]
+
 // #endregion
 
 //Variables for keeping track of users, players, scores, the currentRound, and a constant for setting the maximum number of rounds
-let users = 0;
-let players = [];
-let scores = {};
-let currentRound = 1;
-const maxRounds = 10;
+
+let rooms = {};
 
 //Handle connections to our WebSocket
 io.on("connection", (socket) => {
-  users++;
-  players.push(socket);
-
-  if (users < 2) {
-    io.emit("warning", `There should be more players to start the game!`);
-  } else if (users === 2) {
-    io.emit("warning", ``);
-  } else {
-    socket.emit("warning", `You are a spectator.`);
-  }
-
-  //message handling
   socket.on("message", (msg) => {
     console.log("message " + msg);
 
     io.emit(
       `message`,
-      `${msg.toUpperCase()} (there are also ${users} user(s))`
+      `${new Date().toLocaleTimeString("eo", {
+        hour12: false,
+      })} - ${socket.id.slice(0, 5)}...: ${msg.toUpperCase()}`
     );
   });
 
+  socket.on("joinRoom", (roomId) => {
+    if (!rooms[roomId]) {
+      rooms[roomId] = {
+        users: [],
+        spectators: [],
+        scores: {},
+        round: 0,
+        roundEndTime: null,
+      };
+    }
+
+    if (rooms[roomId].users.length < 4) {
+      rooms[roomId].users.push(socket.id);
+      socket.join(roomId);
+      socket.emit("playerJoined", { playerId: socket.id });
+    } else {
+      rooms[roomId].spectators.push(socket.id);
+      socket.join(roomId);
+      socket.emit("spectatorJoined", { spectatorId: socket.id });
+    }
+
+    io.to(roomId).emit("roomData", rooms[roomId]);
+
+    if (rooms[roomId].users.length === 4) {
+      startGame(roomId);
+    }
+  });
+
+  socket.on("submitPicture", (roomId, picture) => {
+    if (!rooms[roomId] || !rooms[roomId].roundEndTime) return;
+
+    if (Date.now() > rooms[roomId].roundEndTime) {
+      socket.emit("roundOver");
+      return;
+    }
+
+    const score = Math.floor(Math.random() * 10) + 1;
+    if (!rooms[roomId].scores[socket.id]) {
+      rooms[roomId].scores[socket.id] = [];
+    }
+    rooms[roomId].scores[socket.id].push(score);
+    io.to(roomId).emit("score", { userId: socket.id, score });
+  });
+
   socket.on("disconnect", () => {
-    users--;
-    players = players.filter((player) => player.id !== socket.id);
-    console.log("User diconnected");
+    console.log("user disconnected:", socket.id);
+    for (let roomId in rooms) {
+      rooms[roomId].users = rooms[roomId].users.filter(
+        (id) => id !== socket.id
+      );
+      rooms[roomId].spectators = rooms[roomId].spectators.filter(
+        (id) => id !== socket.id
+      );
+      if (
+        rooms[roomId].users.length === 0 &&
+        rooms[roomId].spectators.length === 0
+      ) {
+        delete rooms[roomId];
+      }
+    }
   });
 });
+
+const startGame = (roomId) => {
+  rooms[roomId].round = 1;
+  startRound(roomId);
+};
+
+const startRound = (roomId) => {
+  rooms[roomId].roundEndTime = Date.now() + 60000; // 60 seconds from now
+  io.to(roomId).emit("newRound", {
+    round: rooms[roomId].round,
+    endTime: rooms[roomId].roundEndTime,
+  });
+
+  setTimeout(() => {
+    endRound(roomId);
+  }, 60000);
+};
+
+const endRound = (roomId) => {
+  if (!rooms[roomId]) return;
+
+  rooms[roomId].roundEndTime = null;
+  io.to(roomId).emit("roundEnded", rooms[roomId].scores);
+
+  if (rooms[roomId].round < 10) {
+    rooms[roomId].round += 1;
+    startRound(roomId);
+  } else {
+    io.to(roomId).emit("gameOver", rooms[roomId].scores);
+    delete rooms[roomId];
+  }
+};
 
 app.post("/submit", upload.single("picture"), async (req, res) => {
   const time = req.body.time;
