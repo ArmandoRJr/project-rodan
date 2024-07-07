@@ -9,6 +9,7 @@ import { v1 } from "@google-cloud/vision";
 import fetch from "node-fetch";
 import cors from "cors";
 import prompts from "./prompts.js";
+import { sequelize } from "./datasource.js";
 
 // #region Settings
 //Initialize the express application and a server from that application
@@ -53,6 +54,15 @@ const client = new v1.ImageAnnotatorClient({
 
 // WebSocket constants
 // [TO BE UPDATED LATER]
+
+// Sequelize
+try {
+  await sequelize.authenticate();
+  await sequelize.sync({ alter: { drop: false } });
+  console.log("Connection has been established successfully.");
+} catch (error) {
+  console.error("Unable to connect to the database:", error);
+}
 
 // #endregion
 

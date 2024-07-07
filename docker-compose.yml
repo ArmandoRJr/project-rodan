@@ -43,3 +43,15 @@ services:
       - LETSENCRYPT_HOST=api.rodan.armandorojas.me
       - NODE_ENV=production
     env_file: "backend.env"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    env_file: "backend.env"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -14,12 +14,14 @@
   "description": "",
   "dependencies": {
     "@google-cloud/vision": "^4.3.0",
+    "@sequelize/postgres": "^7.0.0-alpha.41",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.4",
+    "sequelize": "^6.37.3",
     "socket.io": "^4.7.5"
   }
 }
