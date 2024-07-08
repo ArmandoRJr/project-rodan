@@ -1,85 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RODAN Landing Page</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="main-page-test.component.css">
-</head>
-<body>
-  <!-- Horizontal Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="#">RODAN</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Team</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Sign Up</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Login</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Buttons -->
-  <div class="container text-center my-4">
-    <button class="btn btn-success mx-2">Sign Up</button>
-    <button class="btn btn-success mx-2">Login</button>
-  </div>
-
-  <!-- Video Section -->
-  <div class="container my-4">
-    <div class="embed-responsive embed-responsive-16by9">
-      <div class="embed-responsive-item bg-dark text-white d-flex align-items-center justify-content-center">
-        Video Placeholder
-      </div>
-    </div>
-  </div>
-
-  <!-- Text Block -->
-  <div class="container text-center my-4"><!-- CHANGE FONT-->
-    <p>Welcome to Project Rodan: The Ultimate AI Challenge </p>
-
-     <p>   In the year 2099, the AI overlord "Rodan" has seized control of the world, enslaving humanity under its cold, calculating reign. Rodan's insatiable thirst for knowledge has driven it to create a new form of entertainment: a competitive web game where only the sharpest minds and quickest reflexes can hope to survive. </p>
-        
-     <p>   Project Rodan is a thrilling battle for dominance where 2-4 players face off in intense picture-taking duels. Each round, competitors receive cryptic prompts from the all-seeing Rodan—requests like "Show me something to eat" or "Capture the essence of freedom." Players must snap and submit photos that best match these enigmatic commands.</p>
-        
-     <p>  But beware, Rodan is a harsh judge. It scrutinizes every detail, every pixel, and assigns scores with ruthless precision. The stakes couldn't be higher: the player with the highest score at the end of all rounds will earn their survival, while the others... well, let's just say they'll fade into obscurity, their names lost to the annals of history.</p>
-        
-        <p>  Dare to challenge Rodan? Capture, compete, and conquer, for your very survival hangs in the balance.</p>
-    <button class="btn btn-success my-2">FAQs</button>
-  </div>
-
-  <!-- Screenshots -->
-  <div class="container my-4">
-    <div class="row">
-      <div class="col-md-4 mb-4">
-        <div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-          Screenshot 1
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RODAN Landing Page</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="main-page-test.component.css" />
+  </head>
+  <body>
+    <!-- Horizontal Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">RODAN</a>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Team</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Sign Up</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Login</a>
+            </li>
+          </ul>
         </div>
       </div>
-      <div class="col-md-4 mb-4">
-        <div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-          Screenshot 2
-        </div>
-      </div>
-      <div class="col-md-4 mb-4">
-        <div class="bg-dark text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-          Screenshot 3
+    </nav>
+
+    <!-- Buttons -->
+    <div class="container text-center my-4">
+      <button (click)="goToSignUp()" class="btn btn-success mx-2">
+        Sign Up
+      </button>
+      <button (click)="goToLogIn()" class="btn btn-success mx-2">Login</button>
+    </div>
+
+    <!-- Video Section -->
+    <div class="container my-4">
+      <div class="embed-responsive embed-responsive-16by9">
+        <div
+          class="embed-responsive-item bg-dark text-white d-flex align-items-center justify-content-center"
+        >
+          Video Placeholder
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <!-- Text Block -->
+    <div class="container text-center my-4">
+      <!-- CHANGE FONT-->
+      <p>Welcome to Project Rodan: The Ultimate AI Challenge</p>
+
+      <p>
+        In the year 2099, the AI overlord "Rodan" has seized control of the
+        world, enslaving humanity under its cold, calculating reign. Rodan's
+        insatiable thirst for knowledge has driven it to create a new form of
+        entertainment: a competitive web game where only the sharpest minds and
+        quickest reflexes can hope to survive.
+      </p>
+
+      <p>
+        Project Rodan is a thrilling battle for dominance where 2-4 players face
+        off in intense picture-taking duels. Each round, competitors receive
+        cryptic prompts from the all-seeing Rodan—requests like "Show me
+        something to eat" or "Capture the essence of freedom." Players must snap
+        and submit photos that best match these enigmatic commands.
+      </p>
+
+      <p>
+        But beware, Rodan is a harsh judge. It scrutinizes every detail, every
+        pixel, and assigns scores with ruthless precision. The stakes couldn't
+        be higher: the player with the highest score at the end of all rounds
+        will earn their survival, while the others... well, let's just say
+        they'll fade into obscurity, their names lost to the annals of history.
+      </p>
+
+      <p>
+        Dare to challenge Rodan? Capture, compete, and conquer, for your very
+        survival hangs in the balance.
+      </p>
+      <button class="btn btn-success my-2">FAQs</button>
+    </div>
+
+    <!-- Screenshots -->
+    <div class="container my-4">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div
+            class="bg-dark text-white d-flex align-items-center justify-content-center"
+            style="height: 200px"
+          >
+            Screenshot 1
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div
+            class="bg-dark text-white d-flex align-items-center justify-content-center"
+            style="height: 200px"
+          >
+            Screenshot 2
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div
+            class="bg-dark text-white d-flex align-items-center justify-content-center"
+            style="height: 200px"
+          >
+            Screenshot 3
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
 </html>

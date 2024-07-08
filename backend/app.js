@@ -10,6 +10,7 @@ import fetch from "node-fetch";
 import cors from "cors";
 import prompts from "./prompts.js";
 import { sequelize } from "./datasource.js";
+import { usersRouter } from "./routers/users_router.js";
 
 // #region Settings
 //Initialize the express application and a server from that application
@@ -66,7 +67,7 @@ try {
 
 // #endregion
 
-//Variables for keeping track of users, players, scores, the currentRound, and a constant for setting the maximum number of rounds
+// #region WebSockets
 
 let rooms = {};
 
@@ -178,6 +179,10 @@ const endRound = (roomId) => {
   }
 };
 
+// #endregion
+
+// #region Endpoints
+
 app.post("/submit", upload.single("picture"), async (req, res) => {
   const time = req.body.time;
   const promptId = req.body.promptId;
@@ -238,6 +243,10 @@ app.get("/test", async (req, res) => {
     }`,
   });
 });
+
+app.use("/users", usersRouter);
+
+// #endregion
 
 //start the server now
 server.listen(port, () => {
