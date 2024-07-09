@@ -91,8 +91,10 @@
               "buildTarget": "sign_in_test_frontend:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {"proxyConfig": "proxy.conf.json", "headers": {"Cross-Origin-Opener-Policy": "same-origin-allow-popups"}}
         },
+        
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
         },

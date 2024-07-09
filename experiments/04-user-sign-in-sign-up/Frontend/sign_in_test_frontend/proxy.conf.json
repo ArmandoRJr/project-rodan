@@ -1,0 +1,10 @@
+{
+    "/api": {
+      "target": "http://localhost:4200",
+      "secure": false,
+      "changeOrigin": true,
+      "headers": {
+        "Cross-Origin-Opener-Policy": "same-origin-allow-popups"
+      }
+    }
+  }

@@ -58,7 +58,8 @@ export class AuthComponent implements OnInit {
   initGoogleSignIn() {
     gapi.load('auth2', () => {
       gapi.auth2.init({
-        client_id: '886001870670-q7lmq8lscmlefrqev78rgrsu4u0fiksv.apps.googleusercontent.com'
+        client_id: '1084432527622-ac28v8vdn7j3paib9ojgpfp4n95ugg5f.apps.googleusercontent.com',
+        scope: "",
       });
     });
   }
