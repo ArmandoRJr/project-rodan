@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "^18.0.0",
     "@angular/router": "^18.0.0",
     "bootstrap": "^5.3.3",
+    "ngx-countdown": "^18.0.0",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.7.5",
     "tslib": "^2.3.0",

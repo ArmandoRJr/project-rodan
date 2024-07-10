@@ -5,6 +5,7 @@ import { GameTestComponent } from './components/game-test/game-test.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LogInComponent } from './components/log-in/log-in.component';
+import { GameRoomComponent } from './components/game-room/game-room.component';
 
 export const routes: Routes = [
   {
@@ -36,5 +37,10 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     title: 'Dashboard',
+  },
+  {
+    path: 'room/:id',
+    component: GameRoomComponent,
+    title: 'Game Room',
   },
 ];

@@ -41,7 +41,7 @@ export class LogInComponent {
     this.api.signIn(username, password).subscribe({
       next: (res) => {
         this.loading = false;
-        localStorage.setItem('acessToken', String(res.token));
+        localStorage.setItem('accessToken', String(res.token));
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

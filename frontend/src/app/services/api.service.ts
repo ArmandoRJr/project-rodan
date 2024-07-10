@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { User } from '../classes/user';
 import { SignReturn } from '../classes/sign-return';
 
 @Injectable({
@@ -39,6 +38,14 @@ export class ApiService {
   }
 
   me(): Observable<{ userId: string }> {
-    return this.http.get<{ userId: string }>(this.endpoint + `/users/me`);
+    const token = localStorage.getItem('accessToken');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<{ userId: string }>(this.endpoint + `/users/me`, {
+      headers,
+    });
   }
 }

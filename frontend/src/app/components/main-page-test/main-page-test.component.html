@@ -33,10 +33,30 @@
 
     <!-- Buttons -->
     <div class="container text-center my-4">
-      <button (click)="goToSignUp()" class="btn btn-success mx-2">
+      <button
+        *ngIf="!hasCredentials"
+        [disabled]="checkingAuth"
+        (click)="goToSignUp()"
+        class="btn btn-success mx-2"
+      >
         Sign Up
       </button>
-      <button (click)="goToLogIn()" class="btn btn-success mx-2">Login</button>
+      <button
+        *ngIf="!hasCredentials"
+        [disabled]="checkingAuth"
+        (click)="goToLogIn()"
+        class="btn btn-success mx-2"
+      >
+        Login
+      </button>
+      <button
+        *ngIf="hasCredentials"
+        [disabled]="checkingAuth"
+        (click)="goToDashboard()"
+        class="btn btn-success mx-2"
+      >
+        Go to Dashboard
+      </button>
     </div>
 
     <!-- Video Section -->
