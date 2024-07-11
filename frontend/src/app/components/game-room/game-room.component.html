@@ -108,6 +108,12 @@
               leftTime: (match.endTime - match.startTime) / 1000
             }"
           ></countdown>
+          <div *ngIf="match.round >= 1">
+            <h5>Previous round's stats:</h5>
+            <h6 *ngFor="let player of room.players">
+              {{ player.username }} - {{ getPreviousRoundStats(player.id) }}
+            </h6>
+          </div>
         </div>
       </div>
     </div>
@@ -141,7 +147,7 @@
           ></countdown>
         </div>
         <div class="col-12 text-center my-4">
-          <div *ngIf="checkIfSelfSubmittedPic()">
+          <div *ngIf="checkSelfSubmitted()">
             <div *ngIf="this.self">
               <h6>
                 Objects recognized:

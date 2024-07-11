@@ -168,11 +168,37 @@ export class GameRoomComponent {
     return ready;
   }
 
-  checkIfSelfSubmittedPic() {
+  checkSelfSubmitted() {
     return (
       this.self &&
       this.match &&
       this.self.id in this.match.roundStats[this.match.round].submittedPicture
     );
   }
+
+  getPreviousRoundStats(playerId: string) {
+    if (!this.match || !this.room) {
+      return ``;
+    }
+
+    if (this.match.round <= 0) {
+      return ``;
+    }
+
+    if (
+      playerId in this.match.roundStats[this.match.round - 1].submittedPicture
+    ) {
+      const bestObject =
+        this.match.roundStats[this.match.round - 1].submittedPicture[playerId]
+          .bestObject;
+      const score =
+        this.match.roundStats[this.match.round - 1].submittedPicture[playerId]
+          .score;
+      return `Best object: ${bestObject}, score: ${score}`;
+    } else {
+      return `No submission last round :(`;
+    }
+  }
+
+  checkPlayerSubmittedPrevRound(playerId: string) {}
 }
