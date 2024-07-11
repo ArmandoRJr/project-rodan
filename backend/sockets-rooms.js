@@ -58,8 +58,10 @@ let connections = {};
         chosenObjects: string[],
         submittedPicture: {
           playerId: {
-            picture: file
+            picture: file // Not there yet
             score: int
+            bestObject :string
+            objects: string[]
           }
         }
     }
@@ -424,6 +426,8 @@ export const setupSocketIO = (server) => {
     matches[roomId].roundStats[round].chosenObjects.push(bestObject);
     matches[roomId].roundStats[round].submittedPicture[user.id] = {
       score: finalScore,
+      bestObject,
+      objects: objectNames,
     };
 
     matches[roomId].scores[user.id] =

@@ -55,4 +55,9 @@ export class DashboardComponent {
   joinRoom(id: string) {
     this.router.navigate([`/room/${id}`]);
   }
+
+  refresh() {
+    this.loading = true;
+    this.socket.emit('getRooms');
+  }
 }

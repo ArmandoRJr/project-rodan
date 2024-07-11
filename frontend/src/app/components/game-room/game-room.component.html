@@ -140,7 +140,35 @@
             }"
           ></countdown>
         </div>
-        <div class="col-12 text-center">
+        <div class="col-12 text-center my-4">
+          <div *ngIf="checkIfSelfSubmittedPic()">
+            <div *ngIf="this.self">
+              <h6>
+                Objects recognized:
+                {{
+                  this.match.roundStats[this.match.round].submittedPicture[
+                    this.self.id
+                  ].objects.toString()
+                }}
+              </h6>
+              <h6>
+                Best Object:
+                {{
+                  this.match.roundStats[this.match.round].submittedPicture[
+                    this.self.id
+                  ].bestObject
+                }}
+              </h6>
+              <h6>
+                Score given:
+                {{
+                  this.match.roundStats[this.match.round].submittedPicture[
+                    this.self.id
+                  ].score
+                }}
+              </h6>
+            </div>
+          </div>
           <div style="height: 100%">
             <webcam
               [height]="calcCameraHeight()"

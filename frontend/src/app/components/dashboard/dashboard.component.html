@@ -34,9 +34,17 @@
     <!-- Title and Create Room Button -->
     <div class="container my-4 text-center">
       <h1 class="d-inline-block">Game Rooms</h1>
-      <button (click)="makeRoom()" class="btn btn-success d-inline-block ml-3">
-        Create Room
-      </button>
+      <div>
+        <button
+          (click)="makeRoom()"
+          class="btn btn-success d-inline-block ml-3"
+        >
+          Create Room
+        </button>
+        <button (click)="refresh()" class="btn btn-success d-inline-block ml-3">
+          Refresh
+        </button>
+      </div>
     </div>
 
     <!-- Game Rooms Section -->
@@ -47,7 +55,7 @@
           <div class="card bg-dark text-white">
             <div class="card-body">
               <h5 class="card-title">{{ room.id }}</h5>
-              <p class="card-text">Players: {{ room.users.length }}</p>
+              <p class="card-text">Players: {{ room.players.length }}</p>
               <p class="card-text">Spectators: {{ room.spectators.length }}</p>
               <button (click)="joinRoom(room.id)" class="btn btn-success mr-2">
                 Join as Player

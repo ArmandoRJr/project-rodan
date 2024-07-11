@@ -57,8 +57,10 @@ export class GameRoomComponent {
           chosenObjects: string[];
           submittedPicture: {
             [playerId: string]: {
-              picture: File;
+              //picture: File;
               score: number;
+              bestObject: string;
+              objects: string[];
             };
           };
         }[];
@@ -164,5 +166,13 @@ export class GameRoomComponent {
   // Helpers
   checkBoolean(ready: boolean) {
     return ready;
+  }
+
+  checkIfSelfSubmittedPic() {
+    return (
+      this.self &&
+      this.match &&
+      this.self.id in this.match.roundStats[this.match.round].submittedPicture
+    );
   }
 }
