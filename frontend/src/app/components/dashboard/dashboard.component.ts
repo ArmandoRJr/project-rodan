@@ -49,7 +49,7 @@ export class DashboardComponent {
   }
 
   makeRoom() {
-    this.socket.emit('createRoom', 'nature', 10);
+    this.socket.emit('createRoom', 'home', 10);
   }
 
   joinRoom(id: string) {

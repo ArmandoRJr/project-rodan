@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { SignReturn } from '../classes/sign-return';
+import { User } from '../classes/user';
 
 @Injectable({
   providedIn: 'root',
@@ -37,14 +38,14 @@ export class ApiService {
     return this.http.get<{ message: string }>(this.endpoint + `/users/signout`);
   }
 
-  me(): Observable<{ userId: string }> {
+  me(): Observable<User> {
     const token = localStorage.getItem('accessToken');
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get<{ userId: string }>(this.endpoint + `/users/me`, {
+    return this.http.get<User>(this.endpoint + `/users/me`, {
       headers,
     });
   }
