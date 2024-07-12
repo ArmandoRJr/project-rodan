@@ -105,14 +105,22 @@
           <h4 *ngIf="match.round >= match.maxRound">Thanks for playing!</h4>
           <countdown
             [config]="{
-              leftTime: (match.endTime - match.startTime) / 1000
+              stopTime: match.endTime
             }"
           ></countdown>
           <div *ngIf="match.round >= 1">
             <h5>Previous round's stats:</h5>
-            <h6 *ngFor="let player of room.players">
-              {{ player.username }} - {{ getPreviousRoundStats(player.id) }}
-            </h6>
+            <p class="my-0" *ngFor="let player of room.players">
+              <span
+                [ngClass]="
+                  self && self.id.toString() == player.id.toString()
+                    ? 'text-warning'
+                    : ''
+                "
+                >{{ player.username }}</span
+              >
+              - {{ getPreviousRoundStats(player.id) }}
+            </p>
           </div>
         </div>
       </div>
@@ -132,7 +140,10 @@
                 <h5 class="card-title">
                   Player {{ i + 1 }}: {{ player.username }}
                 </h5>
-                <p class="card-text">Score: {{ match.scores[player.id] }}</p>
+                <p class="card-text">
+                  {{ checkPlayerSubmitted(player.id) ? "✔  " : "" }}Score:
+                  {{ match.scores[player.id] }}
+                </p>
               </div>
             </div>
           </div>
@@ -142,37 +153,47 @@
           <h6>{{ match.roundStats[match.round].prompt }}</h6>
           <countdown
             [config]="{
-              leftTime: (match.endTime - match.startTime) / 1000
+              stopTime: match.endTime
             }"
           ></countdown>
         </div>
+        <div
+          *ngIf="this.takePictureError !== ''"
+          class="col-12 text-center text-danger"
+        >
+          {{ this.takePictureError }}
+        </div>
         <div class="col-12 text-center my-4">
-          <div *ngIf="checkSelfSubmitted()">
-            <div *ngIf="this.self">
-              <h6>
-                Objects recognized:
+          <div *ngIf="self && checkPlayerSubmitted(self.id)">
+            <div *ngIf="this.self" class="my-0 py-0">
+              <h6 class="text-success my-0 py-0">
+                Your efforts have been rewarded, human.
+              </h6>
+              <i class="mt-0 mb-2">
+                You may submit another picture for score,<br />but beware your
+                score may be better...or worse.
+              </i>
+              <p class="my-0 py-0">
+                <span class="text-warning">Objects recognized:</span>
                 {{
                   this.match.roundStats[this.match.round].submittedPicture[
                     this.self.id
-                  ].objects.toString()
+                  ].objects.join(", ")
                 }}
-              </h6>
-              <h6>
-                Best Object:
+              </p>
+              <p class="my-0 py-0">
+                <span class="text-warning">Best object:</span>
                 {{
                   this.match.roundStats[this.match.round].submittedPicture[
                     this.self.id
                   ].bestObject
-                }}
-              </h6>
-              <h6>
-                Score given:
+                }}, <span class="text-warning">score given:</span>
                 {{
                   this.match.roundStats[this.match.round].submittedPicture[
                     this.self.id
                   ].score
                 }}
-              </h6>
+              </p>
             </div>
           </div>
           <div style="height: 100%">
@@ -183,7 +204,9 @@
               (imageCapture)="handleImageCapture($event)"
             ></webcam>
           </div>
-          <button (click)="takePicture()">Send Picture</button>
+          <button class="btn btn-success" (click)="takePicture()">
+            Send Picture
+          </button>
 
           <!-- <button (click)="takePicture()" class="btn btn-success">
             Take Picture

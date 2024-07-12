@@ -16,6 +16,10 @@ const client = new v1.ImageAnnotatorClient({
 
 let matches = {};
 
+const FIVE_SECONDS = 5000;
+const EIGHT_SECONDS = 8000;
+const SIXTY_SECONDS = 60000;
+
 /*
   rooms = {
       roomId: {
@@ -174,6 +178,18 @@ export const setupSocketIO = (server) => {
         username: socket.user.username,
       };
 
+      if (roomId in matches) {
+        if (!(userId in matches[roomId].scores)) {
+          matches[roomId].scores[userId] = 0;
+        }
+        if (!(userId in matches[roomId].points)) {
+          matches[roomId].points[userId] = 0;
+        }
+        if (!(userId in matches[roomId].itemsInQueue)) {
+          matches[roomId].itemsInQueue[userId] = 0;
+        }
+      }
+
       //socket.emit("joinRoomRes", getRoomInfo(roomId));
       transmitRoomData(roomId);
     });
@@ -206,11 +222,12 @@ export const setupSocketIO = (server) => {
       );
 
       const startTime = Date.now();
+      const endTime = startTime + FIVE_SECONDS;
       const roomMatch = {
         state: "countdown",
         promptsLeft: [...prompts[rooms[roomId].environment]],
         startTime: startTime,
-        endTime: startTime + 5000,
+        endTime: endTime,
         round: 0,
         maxRound: rooms[roomId].preferredRounds,
         scores: {},
@@ -229,7 +246,7 @@ export const setupSocketIO = (server) => {
       matches[roomId] = roomMatch;
       transmitRoomData(roomId);
 
-      setTimeout(() => transitionCountdownToRound(roomId), 5000);
+      setTimeout(() => transitionCountdownToRound(roomId), FIVE_SECONDS);
     });
 
     socket.on("takePicture", (roomId, image) =>
@@ -283,8 +300,9 @@ export const setupSocketIO = (server) => {
       matches[roomId].promptsLeft.splice(randomPromptIndex, 1);
 
       const startTime = Date.now();
+      const endTime = startTime + SIXTY_SECONDS;
       matches[roomId].startTime = startTime;
-      matches[roomId].endTime = startTime + 60000;
+      matches[roomId].endTime = endTime;
       matches[roomId].roundStats.push({
         prompt: roundPrompt,
         chosenObjects: [],
@@ -295,10 +313,14 @@ export const setupSocketIO = (server) => {
 
       const round = matches[roomId].round;
       setTimeout(() => {
-        if (roomId in matches && round === matches[roomId].round) {
+        if (
+          roomId in matches &&
+          round === matches[roomId].round &&
+          endTime === matches[roomId].endTime
+        ) {
           transitionRoundToCountdown(roomId);
         }
-      }, 60000);
+      }, SIXTY_SECONDS);
     }
   };
 
@@ -310,12 +332,17 @@ export const setupSocketIO = (server) => {
     matches[roomId].state = "countdown";
     matches[roomId].round = matches[roomId].round + 1;
     const startTime = Date.now();
+    const endTime = startTime + EIGHT_SECONDS;
     matches[roomId].startTime = startTime;
-    matches[roomId].endTime = startTime + 5000;
+    matches[roomId].endTime = endTime;
 
     transmitRoomData(roomId);
 
-    setTimeout(() => transitionCountdownToRound(roomId), 5000);
+    setTimeout(() => {
+      if (roomId in matches && endTime === matches[roomId].endTime) {
+        transitionCountdownToRound(roomId);
+      }
+    }, EIGHT_SECONDS);
   };
 
   const transmitRoomData = (roomId) => {
@@ -339,122 +366,145 @@ export const setupSocketIO = (server) => {
   };
 
   const takePicture = async (roomId, image, socket) => {
-    const user = socket.user;
-    if (!user || !image) {
-      return;
-    }
-
-    if (!(roomId in rooms) || !(roomId in matches)) {
-      return;
-    }
-
-    const request = {
-      image: { content: image },
-    };
-    const [result] = await client.objectLocalization(request);
-    const objects = result.localizedObjectAnnotations;
-
-    const objectNames = [...new Set(objects.map((object) => object.name))];
-
-    const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "system",
-            content: `
-                  I have a list of objects [${objectNames.toString()}]
-                  and this prompt (${
-                    matches[roomId].roundStats[matches[roomId].round].prompt
-                  }).
-                  Respond to me with a JSON object where each key is an
-                  object in the list and the value (in terms of a confidence
-                  score between 0 and 1) of how related
-                  the object is to the prompt.
-                  Don't be afraid to give low scores.
-                  `,
-          },
-        ],
-      }),
-    });
-    const data = await response.json();
-    const content = data.choices[0].message.content;
-    const contentJSON = JSON.parse(content);
-
-    const contentJSONClean = Object.keys(contentJSON).reduce((acc, key) => {
-      acc[String(key)] = contentJSON[key];
-      return acc;
-    }, {});
-
-    const [bestObject, bestValue] = Object.entries(contentJSONClean).reduce(
-      (acc, [key, value]) => {
-        return value > acc[1] ? [key, value] : acc;
-      },
-      ["", -Infinity]
-    );
-
-    let confidence = 0;
-    const bestObjectIdx = objectNames.indexOf(bestObject);
-    if (bestObjectIdx !== -1) {
-      confidence = objects[bestObjectIdx].score;
-    } else {
-      confidence = 0.8;
-    }
-
-    const startTime = matches[roomId].startTime;
-    const endTime = matches[roomId].endTime;
+    const round = matches[roomId]?.round ?? 0;
+    const startTime = matches[roomId]?.startTime ?? Date.now();
+    const endTime = matches[roomId]?.endTime ?? Date.now();
     const nowTime = Date.now();
-    const timeFactor =
-      (endTime - nowTime) / 1000 / ((endTime - startTime) / 1000);
-    const finalScore = Math.round(
-      timeFactor *
-        (bestValue !== -Infinity ? bestValue : 0) *
-        (confidence >= 0.5 ? 1 : 0.7) *
-        1000
-    );
 
-    const round = matches[roomId].round;
+    try {
+      const user = socket.user;
+      if (!user || !image) {
+        return;
+      }
 
-    const prevImageScore =
-      matches[roomId].roundStats[round].submittedPicture[user.id]?.score ?? 0;
+      if (!(roomId in rooms) || !(roomId in matches)) {
+        return;
+      }
 
-    matches[roomId].roundStats[round].chosenObjects.push(bestObject);
-    matches[roomId].roundStats[round].submittedPicture[user.id] = {
-      score: finalScore,
-      bestObject,
-      objects: objectNames,
-    };
+      const request = {
+        image: { content: image },
+      };
+      const [result] = await client.objectLocalization(request);
+      const objects = result.localizedObjectAnnotations;
 
-    matches[roomId].scores[user.id] =
-      matches[roomId].scores[user.id] - prevImageScore + finalScore;
+      const objectNames = [...new Set(objects.map((object) => object.name))];
+      if (objectNames.length === 0) {
+        throw new Error("No identifiable objects found. Try again, human.");
+      }
 
-    // console.log({
-    //   objects: contentJSONClean,
-    //   score: bestValue,
-    //   bestObject,
-    //   bestObjectIdx,
-    //   numerator: (endTime - nowTime) / 1000,
-    //   denominator: (endTime - startTime) / 1000,
-    //   userId: user.id,
-    //   finalScore,
-    //   currentPlayerScore: matches[roomId].scores[user.id],
-    // });
-    if (Date.now() < endTime) {
-      let allPlayersSubmittedPics = true;
-      rooms[roomId].players.forEach((playerId) => {
-        if (!(playerId in matches[roomId].roundStats[round].submittedPicture)) {
-          allPlayersSubmittedPics = false;
+      const response = await fetch(
+        `https://api.openai.com/v1/chat/completions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${OPENAI_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              {
+                role: "system",
+                content: `
+                    I have a list of objects [${objectNames.toString()}]
+                    and this prompt (${
+                      matches[roomId].roundStats[round].prompt
+                    }).
+                    Respond to me with a JSON object where each key is an
+                    object in the list and the value (in terms of a confidence
+                    score between 0 and 1) of how related
+                    the object is to the prompt.
+                    Don't be afraid to give low scores.
+                    `,
+              },
+            ],
+          }),
         }
-      });
-      if (allPlayersSubmittedPics) {
-        transitionRoundToCountdown(roomId);
+      );
+      const data = await response.json();
+      const content = data.choices[0].message.content;
+      const contentJSON = JSON.parse(content);
+
+      const contentJSONClean = Object.keys(contentJSON).reduce((acc, key) => {
+        acc[String(key)] = contentJSON[key];
+        return acc;
+      }, {});
+
+      const [bestObject, bestValue] = Object.entries(contentJSONClean).reduce(
+        (acc, [key, value]) => {
+          return value > acc[1] ? [key, value] : acc;
+        },
+        ["", -Infinity]
+      );
+
+      let confidence = 0;
+      const bestObjectIdx = objectNames.indexOf(bestObject);
+      if (bestObjectIdx !== -1) {
+        confidence = objects[bestObjectIdx].score;
       } else {
-        transmitRoomData(roomId);
+        throw new Error("Rodan's evaluation methods failed. Try again, human");
+        confidence = 0.8;
+      }
+
+      const timeFactor =
+        (endTime - nowTime) / 1000 / ((endTime - startTime) / 1000);
+      const finalScore = Math.round(
+        timeFactor *
+          (bestValue !== -Infinity ? bestValue : 0) *
+          (confidence >= 0.5 ? 1 : 0.7) *
+          1000
+      );
+
+      // console.log({
+      //   objects: contentJSONClean,
+      //   score: bestValue,
+      //   bestObject,
+      //   bestObjectIdx,
+      //   numerator: (endTime - nowTime) / 1000,
+      //   denominator: (endTime - startTime) / 1000,
+      //   userId: user.id,
+      //   finalScore,
+      //   currentPlayerScore: matches[roomId].scores[user.id],
+      // });
+      if (Date.now() < endTime) {
+        // Picture and best object acquired successfully
+        // + all actions finished before round ends
+        // = log picture as part of user's repertoire
+        const prevImageScore =
+          matches[roomId].roundStats[round].submittedPicture[user.id]?.score ??
+          0;
+
+        matches[roomId].roundStats[round].chosenObjects.push(bestObject);
+        matches[roomId].roundStats[round].submittedPicture[user.id] = {
+          score: finalScore,
+          bestObject,
+          objects: objectNames,
+        };
+
+        matches[roomId].scores[user.id] =
+          matches[roomId].scores[user.id] - prevImageScore + finalScore;
+
+        let allPlayersSubmittedPics = true;
+        rooms[roomId].players.forEach((playerId) => {
+          if (
+            !(playerId in matches[roomId].roundStats[round].submittedPicture)
+          ) {
+            allPlayersSubmittedPics = false;
+          }
+        });
+        if (allPlayersSubmittedPics) {
+          transitionRoundToCountdown(roomId);
+        } else {
+          transmitRoomData(roomId);
+        }
+      }
+    } catch (err) {
+      if (Date.now() < endTime) {
+        socket.emit(
+          "takePictureError",
+          err.toString() ??
+            "Rodan had an error scanning your image. Try again, mortal."
+        );
       }
     }
   };
@@ -485,35 +535,3 @@ export const setupSocketIO = (server) => {
 
   // #endregion
 };
-
-// const startGame = (roomId) => {
-//   rooms[roomId].round = 1;
-//   startRound(roomId);
-// };
-
-// const startRound = (roomId) => {
-//   rooms[roomId].roundEndTime = Date.now() + 60000; // 60 seconds from now
-//   io.to(roomId).emit("newRound", {
-//     round: rooms[roomId].round,
-//     endTime: rooms[roomId].roundEndTime,
-//   });
-
-//   setTimeout(() => {
-//     endRound(roomId);
-//   }, 60000);
-// };
-
-// const endRound = (roomId) => {
-//   if (!rooms[roomId]) return;
-
-//   rooms[roomId].roundEndTime = null;
-//   io.to(roomId).emit("roundEnded", rooms[roomId].scores);
-
-//   if (rooms[roomId].round < 10) {
-//     rooms[roomId].round += 1;
-//     startRound(roomId);
-//   } else {
-//     io.to(roomId).emit("gameOver", rooms[roomId].scores);
-//     delete rooms[roomId];
-//   }
-// };

@@ -70,8 +70,11 @@ export class GameRoomComponent {
   webcamImage: WebcamImage | undefined;
   triggerObservable: Subject<void> = new Subject<void>();
 
+  takePictureError: string;
+
   constructor(private router: Router, private api: ApiService) {
     this.roomId = this.route.snapshot.params['id'];
+    this.takePictureError = '';
     const token = localStorage.getItem('accessToken');
     if (token === null || token === undefined) {
       this.router.navigate(['/']);
@@ -102,7 +105,15 @@ export class GameRoomComponent {
       this.socket.emit('joinRoom', this.roomId, 'player');
     });
 
+    this.socket.on('joinRoomRes', (res) => {
+      if (res.error) {
+        console.log(res.error);
+        this.router.navigate(['/dashboard']);
+      }
+    });
+
     this.socket.on('receiveCurrentState', (res) => {
+      console.log(res);
       if (res.room) {
         this.room = res.room;
       } else {
@@ -123,6 +134,14 @@ export class GameRoomComponent {
       } else {
         this.currentState = 0;
       }
+
+      if (this.currentState !== 3) {
+        this.takePictureError = '';
+      }
+    });
+
+    this.socket.on('takePictureError', (error: string) => {
+      this.takePictureError = error;
     });
   }
 
@@ -131,6 +150,7 @@ export class GameRoomComponent {
   }
 
   takePicture() {
+    this.takePictureError = '';
     this.triggerObservable.next();
   }
 
@@ -200,5 +220,10 @@ export class GameRoomComponent {
     }
   }
 
-  checkPlayerSubmittedPrevRound(playerId: string) {}
+  checkPlayerSubmitted(playerId: number | string) {
+    return (
+      this.match &&
+      playerId in this.match.roundStats[this.match.round].submittedPicture
+    );
+  }
 }
