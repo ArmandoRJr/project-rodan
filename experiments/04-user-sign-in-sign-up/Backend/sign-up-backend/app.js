@@ -62,6 +62,8 @@ app.listen(PORT, (err) => {
   else console.log("HTTP server on http://localhost:%s", PORT);
 });
 
+
+
 //Verify token endpoint to check whether someone signing in has a valid token in localStorage
 app.get("/api/verify-token", authenticateToken, async (req, res) => {
   const authHeader = req.headers["authorization"];
@@ -70,4 +72,10 @@ app.get("/api/verify-token", authenticateToken, async (req, res) => {
   res
     .status(200)
     .json({ message: "Token is valid", valid: "true", token: dbToken });
+});
+
+app.post('/api/login', (req, res) => {
+  // Handle POST request here
+  console.log(req.body); // Print the POST request body to console
+  res.redirect('http://localhost:4200/dashboard/')
 });

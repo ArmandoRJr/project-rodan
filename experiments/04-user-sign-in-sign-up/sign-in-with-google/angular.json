@@ -3,35 +3,9 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "sign_in_test_frontend": {
+    "sign-in-with-google": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "inlineTemplate": true,
-          "skipTests": true
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true
-        },
-        "@schematics/angular:resolver": {
-          "skipTests": true
-        },
-        "@schematics/angular:service": {
-          "skipTests": true
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -39,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/sign_in_test_frontend",
+            "outputPath": "dist/sign-in-with-google",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -85,16 +59,14 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "sign_in_test_frontend:build:production"
+              "buildTarget": "sign-in-with-google:build:production"
             },
             "development": {
-              "buildTarget": "sign_in_test_frontend:build:development"
+              "buildTarget": "sign-in-with-google:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {"proxyConfig": "proxy.conf.json", "headers": {"Cross-Origin-Opener-Policy": "same-origin-allow-popups"}}
+          "defaultConfiguration": "development"
         },
-        
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
         },
