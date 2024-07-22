@@ -21,12 +21,25 @@ export class SocketTestComponent {
   messages: string[] = [];
 
   constructor() {
-    this.socket = io(environment.apiEndpoint);
+    const token = localStorage.getItem('accessToken');
+    this.socket = io(environment.apiEndpoint, {
+      auth: {
+        token: `Bearer ${token}`,
+      },
+    });
+
     this.socket.on('message', (msg: string) => {
       this.messages.push(msg);
     });
     this.socket.on('warning', (warning: string) => {
       this.warning = warning;
+    });
+
+    this.socket.on('connect_error', (err: any) => {
+      this.warning = `Connection error: ${err.message}`;
+    });
+    this.socket.on('connect_failed', (err: any) => {
+      this.warning = `Connection failed: ${err.message}`;
     });
   }
 

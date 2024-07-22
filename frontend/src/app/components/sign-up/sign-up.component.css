@@ -2,6 +2,7 @@
 body {
   background-color: #1a1a1a;
   color: #ffffff;
+  min-height: 100vh;
 }
 
 .navbar-brand,

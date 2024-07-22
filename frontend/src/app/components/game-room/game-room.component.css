@@ -2,6 +2,8 @@
 body {
   background-color: #1a1a1a;
   color: #ffffff;
+  min-height: 100vh;
+  height: auto;
 }
 
 .navbar-brand,
@@ -19,11 +21,25 @@ body {
   border-color: #4ad29b;
 }
 
-.embed-responsive-item {
-  font-size: 1.5em;
-}
-
 .container {
   padding-bottom: 0 !important;
   margin-bottom: 0 !important;
+}
+
+.card {
+  background-color: #2c2c2c;
+}
+
+.card-title,
+.card-text {
+  color: #ffffff;
+}
+
+.player-card {
+  margin-bottom: 20px;
+}
+
+h1 {
+  display: inline-block;
+  margin-right: 15px;
 }
