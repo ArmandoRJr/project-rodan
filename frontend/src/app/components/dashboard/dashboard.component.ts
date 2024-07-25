@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ export class DashboardComponent {
   loading: boolean;
   rooms: Room[];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private ngZone: NgZone) {
     this.loading = true;
     this.rooms = [];
     const token = localStorage.getItem('accessToken');
@@ -39,8 +39,10 @@ export class DashboardComponent {
     });
 
     this.socket.on('getRoomsRes', (res: { rooms: Room[] }) => {
-      this.rooms = res.rooms;
-      this.loading = false;
+      this.ngZone.run(() => {
+        this.rooms = res.rooms;
+        this.loading = false;
+      });
     });
 
     this.socket.on('createRoomRes', (res: { room: Room }) => {

@@ -4,8 +4,22 @@ import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import { Token } from "../models/tokens.js";
 import { isAuthenticated } from "../middleware/auth.js";
+import { OAuth2Client } from "google-auth-library";
 
 export const usersRouter = Router();
+
+const client = new OAuth2Client();
+
+const createToken = async (userId) => {
+  const expiresAt = new Date(Date.now() + 90 * 60 * 60 * 1000);
+  const tokenString = randomBytes(32).toString("hex");
+  const accessToken = await Token.create({
+    token: tokenString,
+    UserId: userId,
+    expiresAt,
+  });
+  return accessToken;
+};
 
 usersRouter.post("/signup", async (req, res) => {
   const username = req.body.username;
@@ -50,13 +64,7 @@ usersRouter.post("/signup", async (req, res) => {
     return res.status(422).json({ error: "User creation failed." });
   }
 
-  const expiresAt = new Date(Date.now() + 90 * 60 * 60 * 1000);
-  const tokenString = randomBytes(32).toString("hex");
-  const accessToken = await Token.create({
-    token: tokenString,
-    UserId: user.id,
-    expiresAt,
-  });
+  const accessToken = await createToken(user.id);
 
   res.json({
     tokenType: "Bearer",
@@ -92,19 +100,70 @@ usersRouter.post("/signin", async (req, res) => {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
 
-  const expiresAt = new Date(Date.now() + 90 * 60 * 60 * 1000);
-  const tokenString = randomBytes(32).toString("hex");
-  const newAccessToken = await Token.create({
-    token: tokenString,
-    UserId: user.id,
-    expiresAt,
-  });
+  const newAccessToken = await createToken(user.id);
+
   return res.json({
     tokenType: "Bearer",
     token: newAccessToken.token,
     username,
     id: user.id,
   });
+});
+
+usersRouter.post("/signbygoogle", async (req, res) => {
+  try {
+    const token = req.body.token;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience:
+        "108707921610-oqu0od2chsdml6im4d0vhvp7hbt8vmvi.apps.googleusercontent.com",
+    });
+    const userInfo = ticket.getPayload();
+    if (userInfo === undefined) {
+      throw new Error("");
+    }
+
+    const user = await User.findOne({ where: { googleId: userInfo.sub } });
+    if (user) {
+      const newAccessToken = await createToken(user.id);
+      return res.json({
+        tokenType: "Bearer",
+        token: newAccessToken.token,
+        username: user.username,
+        id: user.id,
+      });
+    }
+
+    const username = `${
+      userInfo.family_name ??
+      userInfo.given_name ??
+      userInfo.name ??
+      "GoogleUser"
+    }${Math.floor(Math.random() * 99999) + 1}`;
+    const newUser = User.build({
+      username,
+      password: bcrypt.hashSync(userInfo.sub, bcrypt.genSaltSync(10)),
+      googleId: userInfo.sub,
+    });
+
+    try {
+      await newUser.save();
+    } catch {
+      return res.status(422).json({ error: "User creation failed." });
+    }
+
+    const accessToken = await createToken(newUser.id);
+
+    return res.json({
+      tokenType: "Bearer",
+      token: accessToken.token,
+      username,
+      id: newUser.id,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "Google sign process failed." });
+  }
 });
 
 usersRouter.get("/signout", isAuthenticated, async (req, res) => {

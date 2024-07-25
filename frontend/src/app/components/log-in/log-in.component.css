@@ -28,3 +28,9 @@ body {
   padding-bottom: 0 !important;
   margin-bottom: 0 !important;
 }
+
+.g_id_signin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

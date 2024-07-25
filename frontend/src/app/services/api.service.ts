@@ -34,6 +34,12 @@ export class ApiService {
     });
   }
 
+  signByGoogle(token: string): Observable<SignReturn> {
+    return this.http.post<SignReturn>(this.endpoint + `/users/signbygoogle`, {
+      token,
+    });
+  }
+
   signOut(): Observable<{ message: string }> {
     return this.http.get<{ message: string }>(this.endpoint + `/users/signout`);
   }

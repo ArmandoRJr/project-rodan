@@ -33,6 +33,34 @@ export class SignUpComponent {
     });
   }
 
+  ngAfterViewInit(): void {
+    (window as any).loginCallback = this.loginCallback.bind(this);
+    this.loadGoogleSignInScript();
+  }
+
+  loginCallback(response: any): void {
+    this.loading = true;
+    this.api.signByGoogle(response.credential).subscribe({
+      next: (res) => {
+        this.loading = false;
+        localStorage.setItem('accessToken', String(res.token));
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.error = err.error.error;
+      },
+    });
+  }
+
+  loadGoogleSignInScript(): void {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  }
+
   signUp() {
     const username = this.signUpForm.value.username;
     const password = this.signUpForm.value.password;
