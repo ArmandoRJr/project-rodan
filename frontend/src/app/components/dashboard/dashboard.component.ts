@@ -5,11 +5,12 @@ import { Router } from '@angular/router';
 import { Room } from '../../classes/room';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
+import { CountdownModule } from 'ngx-countdown';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CountdownModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

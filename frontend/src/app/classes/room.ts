@@ -4,4 +4,5 @@ export interface Room {
   spectators: string[];
   environment: string;
   preferredRounds: number;
+  lastPlayerActivity: number;
 }
