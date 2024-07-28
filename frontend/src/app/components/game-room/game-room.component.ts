@@ -1,4 +1,4 @@
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
@@ -78,7 +78,11 @@ export class GameRoomComponent {
   selectedPlayer: string | null = null;
   selectedItem: string | null = null;
 
-  constructor(private router: Router, private api: ApiService) {
+  constructor(
+    private router: Router,
+    private api: ApiService,
+    private ngZone: NgZone
+  ) {
     this.roomId = this.route.snapshot.params['id'];
     this.takePictureError = '';
     this.sendPictureBool = true;
@@ -113,42 +117,52 @@ export class GameRoomComponent {
     });
 
     this.socket.on('joinRoomRes', (res) => {
-      if (res.error) {
-        console.log(res.error);
-        this.router.navigate(['/dashboard']);
-      }
+      this.ngZone.run(() => {
+        if (res.error) {
+          console.log(res.error);
+          this.router.navigate(['/dashboard']);
+        }
+      });
     });
 
     this.socket.on('receiveCurrentState', (res) => {
-      console.log(res);
-      if (res.room) {
-        this.room = res.room;
-      } else {
-        this.router.navigate(['/dashboard']);
-      }
-      if (res.match) {
-        this.match = res.match;
-      } else {
-        this.match = undefined;
-      }
+      this.ngZone.run(() => {
+        console.log(res);
+        if (res.room) {
+          this.room = res.room;
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
+        if (res.match) {
+          this.match = res.match;
+        } else {
+          this.match = undefined;
+        }
 
-      if (this.room && !this.match) {
-        this.currentState = 1;
-      } else if (this.room && this.match && this.match.state === 'countdown') {
-        this.currentState = 2;
-      } else if (this.room && this.match && this.match.state === 'round') {
-        this.currentState = 3;
-      } else {
-        this.currentState = 0;
-      }
+        if (this.room && !this.match) {
+          this.currentState = 1;
+        } else if (
+          this.room &&
+          this.match &&
+          this.match.state === 'countdown'
+        ) {
+          this.currentState = 2;
+        } else if (this.room && this.match && this.match.state === 'round') {
+          this.currentState = 3;
+        } else {
+          this.currentState = 0;
+        }
 
-      if (this.currentState !== 3) {
-        this.takePictureError = '';
-      }
+        if (this.currentState !== 3) {
+          this.takePictureError = '';
+        }
+      });
     });
 
     this.socket.on('takePictureError', (error: string) => {
-      this.takePictureError = error;
+      this.ngZone.run(() => {
+        this.takePictureError = error;
+      });
     });
   }
 
