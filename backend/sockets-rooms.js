@@ -19,6 +19,7 @@ let matches = {};
 const FIVE_SECONDS = 5000;
 const EIGHT_SECONDS = 8000;
 const SIXTY_SECONDS = 60000;
+const FIFTEEN_MINUTES = 900000;
 
 /*
   rooms = {
@@ -29,6 +30,7 @@ const SIXTY_SECONDS = 60000;
           spectators: int[],
           environment: string,
           preferredRounds: int,
+          lastPlayerActivity: int
       }
   },
   ...
@@ -117,6 +119,7 @@ export const setupSocketIO = (server) => {
         spectators: [],
         environment: environment ?? "home",
         preferredRounds: preferredRounds ?? 10,
+        lastPlayerActivity: Date.now(),
       };
 
       socket.emit("createRoomRes", { room: rooms[roomId] });
@@ -171,6 +174,9 @@ export const setupSocketIO = (server) => {
       } else {
         rooms[roomId].spectators.push(userId);
       }
+
+      rooms[roomId].lastPlayerActivity = Date.now();
+
       connections[userId] = {
         roomId,
         socketId: socket.id,
@@ -278,6 +284,20 @@ export const setupSocketIO = (server) => {
           if (rooms[roomId].players.length < 2 && roomId in matches) {
             delete matches[roomId];
           }
+
+          const lastP = Date.now();
+          rooms[roomId].lastPlayerActivity = lastP;
+
+          setTimeout(() => {
+            if (
+              roomId in rooms &&
+              rooms[roomId].players.length === 0 &&
+              rooms[roomId].lastPlayerActivity === lastP
+            ) {
+              delete rooms[roomId];
+            }
+          }, FIFTEEN_MINUTES);
+
           transmitRoomData(roomId);
         }
       }
