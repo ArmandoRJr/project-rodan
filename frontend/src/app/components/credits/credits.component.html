@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RODAN Credits Page</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="credits.component.css" />
+  </head>
+  <body>
+    <!-- Horizontal Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <span class="navbar-brand btn" (click)="goToMainPage()">RODAN</span>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ml-auto"></ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Credits Section -->
+    <div class="container text-center my-4">
+      <h1>Project Rodan Credits</h1>
+      <p>
+        This project would not have been possible without the contributions of
+        the following individuals and resources:
+      </p>
+
+      <div class="my-4">
+        <h3>Development Team</h3>
+        <p>Armando Rojas - Lead Developer</p>
+        <p>Alexander Teeter - Backend Developer</p>
+        <p>Kirtan Ashokkumar Patel - Frontend Developer</p>
+      </div>
+
+      <div class="my-4">
+        <h3>Resources</h3>
+        <p>
+          Bootstrap -
+          <a href="https://getbootstrap.com/">https://getbootstrap.com/</a>
+        </p>
+        <p>jQuery - <a href="https://jquery.com/">https://jquery.com/</a></p>
+        <p>
+          Popper.js -
+          <a href="https://popper.js.org/">https://popper.js.org/</a>
+        </p>
+      </div>
+
+      <button class="btn btn-success my-2" (click)="goToMainPage()">
+        Return Home
+      </button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

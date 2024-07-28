@@ -45,4 +45,27 @@ export class MainPageTestComponent {
   goToDashboard() {
     this.router.navigate(['/dashboard']);
   }
+
+  goToCredits() {
+    this.router.navigate(['/credits']);
+  }
+
+  goToMainPage() {
+    this.router.navigate(['/']);
+  }
+
+  logOut() {
+    this.checkingAuth = true;
+    this.api.signOut().subscribe({
+      next: (res) => {
+        localStorage.removeItem('accessToken');
+        this.checkingAuth = false;
+        this.hasCredentials = false;
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.checkingAuth = false;
+      },
+    });
+  }
 }

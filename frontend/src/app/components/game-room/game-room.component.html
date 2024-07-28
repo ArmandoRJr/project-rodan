@@ -17,14 +17,11 @@
         <a class="navbar-brand" href="/">RODAN</a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav ml-auto">
+            <span class="nav-link btn" (click)="goToDashboard()"
+              >Dashboard</span
+            >
             <li class="nav-item">
-              <a class="nav-link" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Profile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Logout</a>
+              <span class="nav-link btn" (click)="logOut()">Logout</span>
             </li>
           </ul>
         </div>
@@ -204,7 +201,7 @@
               (imageCapture)="handleImageCapture($event)"
             ></webcam>
           </div>
-          <button class="btn btn-success" (click)="takePicture()">
+          <button class="btn btn-primary" (click)="takePicture()">
             Send Picture
           </button>
 

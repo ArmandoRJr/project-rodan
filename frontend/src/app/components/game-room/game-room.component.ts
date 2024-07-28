@@ -226,4 +226,20 @@ export class GameRoomComponent {
       playerId in this.match.roundStats[this.match.round].submittedPicture
     );
   }
+
+  goToDashboard() {
+    this.socket.disconnect();
+    this.router.navigate(['/dashboard']);
+  }
+
+  logOut() {
+    this.api.signOut().subscribe({
+      next: (res) => {
+        this.socket.disconnect();
+        localStorage.removeItem('accessToken');
+        this.router.navigate(['/']);
+      },
+      error: (err) => {},
+    });
+  }
 }

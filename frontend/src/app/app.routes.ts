@@ -6,6 +6,7 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { LogInComponent } from './components/log-in/log-in.component';
 import { GameRoomComponent } from './components/game-room/game-room.component';
+import { CreditsComponent } from './components/credits/credits.component';
 
 export const routes: Routes = [
   {
@@ -42,5 +43,10 @@ export const routes: Routes = [
     path: 'room/:id',
     component: GameRoomComponent,
     title: 'Game Room',
+  },
+  {
+    path: 'credits',
+    component: CreditsComponent,
+    title: 'Credits',
   },
 ];

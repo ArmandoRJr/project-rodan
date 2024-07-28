@@ -78,4 +78,12 @@ export class SignUpComponent {
       },
     });
   }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToMainPage() {
+    this.router.navigate(['/']);
+  }
 }

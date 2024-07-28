@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 import { Room } from '../../classes/room';
 import { CommonModule } from '@angular/common';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,7 +18,11 @@ export class DashboardComponent {
   loading: boolean;
   rooms: Room[];
 
-  constructor(private router: Router, private ngZone: NgZone) {
+  constructor(
+    private router: Router,
+    private ngZone: NgZone,
+    private api: ApiService
+  ) {
     this.loading = true;
     this.rooms = [];
     const token = localStorage.getItem('accessToken');
@@ -61,5 +66,21 @@ export class DashboardComponent {
   refresh() {
     this.loading = true;
     this.socket.emit('getRooms');
+  }
+
+  goToMainPage() {
+    this.socket.disconnect();
+    this.router.navigate(['/']);
+  }
+
+  logOut() {
+    this.api.signOut().subscribe({
+      next: (res) => {
+        localStorage.removeItem('accessToken');
+        this.socket.disconnect();
+        this.router.navigate(['/']);
+      },
+      error: (err) => {},
+    });
   }
 }
