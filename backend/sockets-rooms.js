@@ -62,10 +62,10 @@ let connections = {};
         chosenObjects: string[],
         submittedPicture: {
           playerId: {
-            picture: file // Not there yet
             score: int
             bestObject :string
             objects: string[]
+            itemsUsed: int[]
           }
         }
     }
@@ -253,6 +253,10 @@ export const setupSocketIO = (server) => {
       takePicture(roomId, image, socket)
     );
 
+    socket.on("sendItem", (roomId, playerId, itemId) =>
+      sendItem(roomId, playerId, itemId, socket)
+    );
+
     socket.on("disconnect", () => {
       console.log("user disconnected:", socket.id);
       const userId = socket.user.id;
@@ -308,6 +312,28 @@ export const setupSocketIO = (server) => {
         chosenObjects: [],
         submittedPicture: {},
       });
+
+      // Score mechanics
+      const sortedPlayers = Object.entries(matches[roomId].scores)
+        .sort((a, b) => a[1] - b[1])
+        .map((entry) => entry[0]);
+      if (matches[roomId].round > 0) {
+        if (sortedPlayers.length === 2) {
+          matches[roomId].points[sortedPlayers[0]] += 10;
+          matches[roomId].points[sortedPlayers[1]] += 5;
+        }
+        if (sortedPlayers.length === 3) {
+          matches[roomId].points[sortedPlayers[0]] += 11;
+          matches[roomId].points[sortedPlayers[1]] += 6;
+          matches[roomId].points[sortedPlayers[2]] += 3;
+        }
+        if (sortedPlayers.length === 4) {
+          matches[roomId].points[sortedPlayers[0]] += 12;
+          matches[roomId].points[sortedPlayers[1]] += 7;
+          matches[roomId].points[sortedPlayers[2]] += 4;
+          matches[roomId].points[sortedPlayers[3]] += 2;
+        }
+      }
 
       transmitRoomData(roomId);
 
@@ -377,7 +403,11 @@ export const setupSocketIO = (server) => {
         return;
       }
 
-      if (!(roomId in rooms) || !(roomId in matches)) {
+      if (
+        !(roomId in rooms) ||
+        !(roomId in matches) ||
+        !(user.id in matches[roomId].itemsInQueue)
+      ) {
         return;
       }
 
@@ -385,7 +415,26 @@ export const setupSocketIO = (server) => {
         image: { content: image },
       };
       const [result] = await client.objectLocalization(request);
-      const objects = result.localizedObjectAnnotations;
+      const objectsTemp = result.localizedObjectAnnotations;
+
+      const item1Count =
+        matches[roomId].itemsInQueue[user.id].length > 0
+          ? matches[roomId].itemsInQueue[user.id].reduce((n, val) => {
+              return n + (val === 1);
+            }, 0)
+          : 0;
+      if (objectsTemp.length > 0 && objectsTemp.length <= item1Count) {
+        const itemsList = matches[roomId].itemsInQueue[user.id];
+        matches[roomId].itemsInQueue[user.id] = filterOutItems(
+          itemsList,
+          1,
+          objectsTemp.length
+        );
+        throw new Error("Another user has removed all of your items...");
+      }
+
+      const objects =
+        item1Count > 0 ? objectsTemp.slice(0, -item1Count) : objectsTemp;
 
       const objectNames = [...new Set(objects.map((object) => object.name))];
       if (objectNames.length === 0) {
@@ -448,24 +497,23 @@ export const setupSocketIO = (server) => {
 
       const timeFactor =
         (endTime - nowTime) / 1000 / ((endTime - startTime) / 1000);
-      const finalScore = Math.round(
+      const finalScoreTemp = Math.round(
         timeFactor *
           (bestValue !== -Infinity ? bestValue : 0) *
           (confidence >= 0.5 ? 1 : 0.7) *
           1000
       );
 
-      // console.log({
-      //   objects: contentJSONClean,
-      //   score: bestValue,
-      //   bestObject,
-      //   bestObjectIdx,
-      //   numerator: (endTime - nowTime) / 1000,
-      //   denominator: (endTime - startTime) / 1000,
-      //   userId: user.id,
-      //   finalScore,
-      //   currentPlayerScore: matches[roomId].scores[user.id],
-      // });
+      const item2Count =
+        matches[roomId].itemsInQueue[user.id].length > 0
+          ? matches[roomId].itemsInQueue[user.id].reduce((n, val) => {
+              return n + (val === 2);
+            }, 0)
+          : 0;
+      const finalScore = Math.round(
+        item2Count > 0 ? finalScoreTemp * 0.7 ** item2Count : finalScoreTemp
+      );
+
       if (Date.now() < endTime && matches[roomId]?.state === "round") {
         // Picture and best object acquired successfully
         // + all actions finished before round ends
@@ -474,12 +522,33 @@ export const setupSocketIO = (server) => {
           matches[roomId].roundStats[round].submittedPicture[user.id]?.score ??
           0;
 
+        const itemsUsed = [];
+        if (item1Count > 0 || item2Count > 0) {
+          for (let i = 0; i < item1Count; i++) {
+            itemsUsed.push(1);
+          }
+          for (let i = 0; i < item2Count; i++) {
+            itemsUsed.push(2);
+          }
+        }
         matches[roomId].roundStats[round].chosenObjects.push(bestObject);
         matches[roomId].roundStats[round].submittedPicture[user.id] = {
           score: finalScore,
           bestObject,
           objects: objectNames,
+          itemsUsed,
         };
+
+        matches[roomId].itemsInQueue[user.id] = filterOutItems(
+          matches[roomId].itemsInQueue[user.id],
+          1,
+          item1Count
+        );
+        matches[roomId].itemsInQueue[user.id] = filterOutItems(
+          matches[roomId].itemsInQueue[user.id],
+          2,
+          item2Count
+        );
 
         matches[roomId].scores[user.id] =
           matches[roomId].scores[user.id] - prevImageScore + finalScore;
@@ -531,6 +600,61 @@ export const setupSocketIO = (server) => {
     }
 
     return returnJSON;
+  };
+
+  const sendItem = (roomId, playerId, itemId, socket) => {
+    const user = socket.user;
+
+    if (
+      roomId === undefined ||
+      playerId === undefined ||
+      itemId === undefined ||
+      isNaN(playerId) ||
+      isNaN(itemId)
+    ) {
+      return;
+    }
+
+    if (!(roomId in rooms) || !(roomId in matches)) {
+      return;
+    }
+
+    if (
+      rooms[roomId].players.indexOf(playerId) <= -1 ||
+      !(playerId in matches[roomId].scores) ||
+      !(playerId in matches[roomId].points) ||
+      !(playerId in matches[roomId].itemsInQueue)
+    ) {
+      return;
+    }
+
+    // Item 1: Object removal (removes one object from image)
+    // Item 2: Image distortion (makes score * 0.75)
+
+    if (itemId === 1 || itemId === 2) {
+      let scoreToDeduce = 0;
+      if (itemId === 1) scoreToDeduce = 3;
+      if (itemId === 2) scoreToDeduce = 7;
+      if (matches[roomId].points[user.id] < scoreToDeduce) {
+        return;
+      }
+      matches[roomId].points[user.id] -= scoreToDeduce;
+      matches[roomId].itemsInQueue[playerId].push(itemId);
+      transmitRoomData(roomId);
+    }
+  };
+
+  const filterOutItems = (itemList, itemId, itemCount) => {
+    let count = 0;
+    return itemList.filter((item) => {
+      if (item === itemId) {
+        if (count < itemCount) {
+          count++;
+          return false;
+        }
+      }
+      return true;
+    });
   };
 
   // #endregion

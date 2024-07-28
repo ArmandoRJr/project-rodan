@@ -8,11 +8,12 @@ import { ApiService } from '../../services/api.service';
 import { User } from '../../classes/user';
 import { WebcamImage, WebcamModule } from 'ngx-webcam';
 import { Subject } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-game-room',
   standalone: true,
-  imports: [CommonModule, CountdownModule, WebcamModule],
+  imports: [CommonModule, CountdownModule, WebcamModule, FormsModule],
   templateUrl: './game-room.component.html',
   styleUrl: './game-room.component.css',
 })
@@ -61,6 +62,7 @@ export class GameRoomComponent {
               score: number;
               bestObject: string;
               objects: string[];
+              itemsUsed: number[];
             };
           };
         }[];
@@ -71,10 +73,15 @@ export class GameRoomComponent {
   triggerObservable: Subject<void> = new Subject<void>();
 
   takePictureError: string;
+  sendPictureBool: boolean;
+
+  selectedPlayer: string | null = null;
+  selectedItem: string | null = null;
 
   constructor(private router: Router, private api: ApiService) {
     this.roomId = this.route.snapshot.params['id'];
     this.takePictureError = '';
+    this.sendPictureBool = true;
     const token = localStorage.getItem('accessToken');
     if (token === null || token === undefined) {
       this.router.navigate(['/']);
@@ -151,7 +158,12 @@ export class GameRoomComponent {
 
   takePicture() {
     this.takePictureError = '';
+    this.sendPictureBool = false;
     this.triggerObservable.next();
+
+    setTimeout(() => {
+      this.sendPictureBool = true;
+    }, 1000);
   }
 
   startGame() {
@@ -241,5 +253,82 @@ export class GameRoomComponent {
       },
       error: (err) => {},
     });
+  }
+
+  openItemsModal() {
+    this.resetSelections();
+    const itemsModal: any = document.getElementById('itemsModal');
+    itemsModal.showModal();
+  }
+
+  closeItemsModal() {
+    const itemsModal: any = document.getElementById('itemsModal');
+    itemsModal.close();
+    this.resetSelections();
+  }
+
+  sendItem() {
+    if (this.selectedPlayer && this.selectedItem) {
+      const playerId = this.selectedPlayer;
+      const itemId = Number(this.selectedItem);
+
+      this.socket.emit('sendItem', this.roomId, playerId, itemId);
+
+      // Close the modal
+      this.closeItemsModal();
+    } else {
+      alert('Please select a player and an item.');
+    }
+  }
+
+  resetSelections() {
+    this.selectedPlayer = null;
+    this.selectedItem = null;
+    const playerSelections = document.querySelectorAll(
+      'input[name="playerSelection"]'
+    );
+    const itemSelections = document.querySelectorAll(
+      'input[name="itemSelection"]'
+    );
+
+    playerSelections.forEach((input) => {
+      (input as HTMLInputElement).checked = false;
+    });
+
+    itemSelections.forEach((input) => {
+      (input as HTMLInputElement).checked = false;
+    });
+  }
+
+  displayPoints() {
+    if (this.self && this.match && this.self.id in this.match.points) {
+      return `- ${this.match.points[this.self.id]} points available`;
+    } else {
+      return ``;
+    }
+  }
+
+  hasEnoughPoints(points: number) {
+    return this.self && this.match && this.match.points[this.self.id] >= points;
+  }
+
+  countObjectsRemoved() {
+    if (this.match && this.self) {
+      return this.match.roundStats[this.match.round].submittedPicture[
+        this.self.id
+      ].itemsUsed.filter((item) => item === 1).length;
+    } else {
+      return 0;
+    }
+  }
+
+  countScoreReduced() {
+    if (this.match && this.self) {
+      return this.match.roundStats[this.match.round].submittedPicture[
+        this.self.id
+      ].itemsUsed.filter((item) => item === 2).length;
+    } else {
+      return 0;
+    }
   }
 }

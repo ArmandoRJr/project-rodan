@@ -166,6 +166,16 @@
               <h6 class="text-success my-0 py-0">
                 Your efforts have been rewarded, human.
               </h6>
+              <h6
+                class="text-danger my-0 py-0"
+                *ngIf="countObjectsRemoved() > 0"
+              >
+                Someone removed {{ countObjectsRemoved() }} of your objects...
+              </h6>
+              <h6 class="text-danger my-0 py-0" *ngIf="countScoreReduced() > 0">
+                Someone distorted your image
+                {{ countScoreReduced() }} time(s)...
+              </h6>
               <i class="mt-0 mb-2">
                 You may submit another picture for score,<br />but beware your
                 score may be better...or worse.
@@ -201,15 +211,107 @@
               (imageCapture)="handleImageCapture($event)"
             ></webcam>
           </div>
-          <button class="btn btn-primary" (click)="takePicture()">
+          <button
+            class="btn btn-primary"
+            (click)="takePicture()"
+            [disabled]="!sendPictureBool"
+          >
             Send Picture
           </button>
-
-          <!-- <button (click)="takePicture()" class="btn btn-success">
-            Take Picture
-          </button> -->
+          <button
+            *ngIf="match.round > 0"
+            type="button"
+            class="btn btn-warning"
+            (click)="openItemsModal()"
+          >
+            Send Item
+          </button>
         </div>
       </div>
+      <dialog id="itemsModal" class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Item Selection {{ displayPoints() }}</h5>
+            <button type="button" class="close" (click)="closeItemsModal()">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <h6>Select Player</h6>
+              <div *ngFor="let player of room.players">
+                <div
+                  *ngIf="self && player.id.toString() !== self.id.toString()"
+                >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="playerSelection"
+                      [id]="player.id"
+                      [(ngModel)]="selectedPlayer"
+                      [value]="player.id"
+                    />
+                    <label class="form-check-label" for="player1">
+                      {{ player.username }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <h6 class="mt-4">Select Item</h6>
+              <p *ngIf="!hasEnoughPoints(3)">
+                You don't have enough points for anything! Come back in the next
+                round!
+              </p>
+              <div class="form-check" *ngIf="hasEnoughPoints(3)">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="itemSelection"
+                  id="1"
+                  [(ngModel)]="selectedItem"
+                  value="1"
+                />
+                <label class="form-check-label" for="1">
+                  [3 points] Object Removal<br />Remove one item from the
+                  opponent's image
+                </label>
+              </div>
+              <div class="form-check" *ngIf="hasEnoughPoints(7)">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="itemSelection"
+                  id="2"
+                  [(ngModel)]="selectedItem"
+                  value="2"
+                />
+                <label class="form-check-label" for="2">
+                  [7 points] Image Distortion<br />Distort the image of your
+                  opponent to reduce their score
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="sendItem()"
+              [disabled]="!selectedPlayer || !selectedItem"
+            >
+              Send Item
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="closeItemsModal()"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

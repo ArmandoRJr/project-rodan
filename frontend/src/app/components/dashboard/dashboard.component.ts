@@ -51,6 +51,7 @@ export class DashboardComponent {
     });
 
     this.socket.on('createRoomRes', (res: { room: Room }) => {
+      this.socket.disconnect();
       this.router.navigate([`/room/${res.room.id}`]);
     });
   }
@@ -60,6 +61,7 @@ export class DashboardComponent {
   }
 
   joinRoom(id: string) {
+    this.socket.disconnect();
     this.router.navigate([`/room/${id}`]);
   }
 

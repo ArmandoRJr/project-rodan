@@ -60,7 +60,11 @@
               <h5 class="card-title">{{ room.id }}</h5>
               <p class="card-text">Players: {{ room.players.length }}</p>
               <p class="card-text">Spectators: {{ room.spectators.length }}</p>
-              <button (click)="joinRoom(room.id)" class="btn btn-success mr-2">
+              <button
+                (click)="joinRoom(room.id)"
+                class="btn btn-success mr-2"
+                [disabled]="room.players.length >= 4"
+              >
                 Join as Player
               </button>
               <!-- <button class="btn btn-success">Join as Spectator</button> -->
