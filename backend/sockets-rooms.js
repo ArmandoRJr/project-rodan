@@ -466,7 +466,7 @@ export const setupSocketIO = (server) => {
       //   finalScore,
       //   currentPlayerScore: matches[roomId].scores[user.id],
       // });
-      if (Date.now() < endTime) {
+      if (Date.now() < endTime && matches[roomId]?.state === "round") {
         // Picture and best object acquired successfully
         // + all actions finished before round ends
         // = log picture as part of user's repertoire
@@ -492,7 +492,7 @@ export const setupSocketIO = (server) => {
             allPlayersSubmittedPics = false;
           }
         });
-        if (allPlayersSubmittedPics) {
+        if (allPlayersSubmittedPics && matches[roomId]?.state === "round") {
           transitionRoundToCountdown(roomId);
         } else {
           transmitRoomData(roomId);
