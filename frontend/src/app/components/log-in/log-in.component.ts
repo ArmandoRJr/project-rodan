@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -24,7 +24,8 @@ export class LogInComponent {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
     this.loading = false;
     this.logInForm = this.fb.group({
@@ -39,17 +40,19 @@ export class LogInComponent {
   }
 
   loginCallback(response: any): void {
-    this.loading = true;
-    this.api.signByGoogle(response.credential).subscribe({
-      next: (res) => {
-        this.loading = false;
-        localStorage.setItem('accessToken', String(res.token));
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = err.error.error;
-      },
+    this.ngZone.run(() => {
+      this.loading = true;
+      this.api.signByGoogle(response.credential).subscribe({
+        next: (res) => {
+          this.loading = false;
+          localStorage.setItem('accessToken', String(res.token));
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error = err.error.error;
+        },
+      });
     });
   }
 
