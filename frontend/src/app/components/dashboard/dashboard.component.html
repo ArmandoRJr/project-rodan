@@ -59,7 +59,6 @@
             <div class="card-body">
               <h5 class="card-title">{{ room.id }}</h5>
               <p class="card-text">Players: {{ room.players.length }}</p>
-              <p class="card-text">Spectators: {{ room.spectators.length }}</p>
               <h6 class="text-warning" *ngIf="room.players.length === 0">
                 Warning - This room will be deleted in
                 <countdown
