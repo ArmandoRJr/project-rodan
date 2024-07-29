@@ -56,5 +56,6 @@ The application will receive Continuous Deployment through a combination of GitH
 
 ## Final Application
 
-The final application can be found [here](https://rodan.armandorojas.me/) (in https://rodan.armandorojas.me/).
-The presentation can be found in [Youtube](https://youtu.be/ZV89jnsmO_A) (https://youtu.be/ZV89jnsmO_A)
+The final application can be found [here](https://rodan.armandorojas.me/).
+
+The presentation can be found in [Youtube](https://youtu.be/ZV89jnsmO_A).
