@@ -1,0 +1,31 @@
+/* Custom styles */
+body {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  min-height: 100vh;
+  height: auto;
+}
+
+.navbar-brand,
+.nav-link {
+  color: #ffffff !important;
+}
+
+.btn-success {
+  background-color: #65f7bf;
+  border-color: #65f7bf;
+}
+
+.btn-success:hover {
+  background-color: #4ad29b;
+  border-color: #4ad29b;
+}
+
+.embed-responsive-item {
+  font-size: 1.5em;
+}
+
+.container {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}

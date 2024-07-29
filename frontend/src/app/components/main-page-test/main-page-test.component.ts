@@ -46,6 +46,10 @@ export class MainPageTestComponent {
     this.router.navigate(['/dashboard']);
   }
 
+  goToProfile() {
+    this.router.navigate(['/profile']);
+  }
+
   goToCredits() {
     this.router.navigate(['/credits']);
   }

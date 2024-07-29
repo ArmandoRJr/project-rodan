@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { SignReturn } from '../classes/sign-return';
 import { User } from '../classes/user';
+import { ProfileInfo } from '../classes/profileInfo';
 
 @Injectable({
   providedIn: 'root',
@@ -52,6 +53,18 @@ export class ApiService {
     });
 
     return this.http.get<User>(this.endpoint + `/users/me`, {
+      headers,
+    });
+  }
+
+  profileInfo(): Observable<ProfileInfo> {
+    const token = localStorage.getItem('accessToken');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<ProfileInfo>(this.endpoint + `/users/profile`, {
       headers,
     });
   }

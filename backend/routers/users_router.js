@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { Token } from "../models/tokens.js";
 import { isAuthenticated } from "../middleware/auth.js";
 import { OAuth2Client } from "google-auth-library";
+import { Matches } from "../models/matches.js";
+import { Sequelize } from "sequelize";
 
 export const usersRouter = Router();
 
@@ -180,4 +182,20 @@ usersRouter.get("/signout", isAuthenticated, async (req, res) => {
 
 usersRouter.get("/me", isAuthenticated, async (req, res) => {
   return res.json({ username: req.user.username, id: req.user.id });
+});
+
+usersRouter.get("/profile", isAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const playerMatches = await Matches.findAll({
+    where: {
+      [Sequelize.Op.or]: [
+        { playerOneId: userId },
+        { playerTwoId: userId },
+        { playerThreeId: userId },
+        { playerFourId: userId },
+      ],
+    },
+  });
+
+  return res.json({ matches: playerMatches.length });
 });

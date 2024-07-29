@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RODAN Profile Page</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="profile.component.css" />
+  </head>
+  <body>
+    <!-- Horizontal Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <span class="navbar-brand btn" (click)="goToMainPage()">RODAN</span>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ml-auto"></ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container text-center my-4" *ngIf="self === undefined">
+      <h2>Loading User Profile...</h2>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="container text-center my-4" *ngIf="self !== undefined">
+      <h2>User Profile</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <img
+            src="assets/profile-picture.png"
+            alt="Profile Picture"
+            class="img-fluid rounded-circle"
+          />
+        </div>
+        <div class="col-md-8 mb-4 text-left">
+          <h4>{{ self.username }}</h4>
+          <p>An anonymous fighter trying to survive RODAN.</p>
+
+          <h6 class="mt-4">User Stats</h6>
+          <p *ngIf="checkingMatchData">Loading...</p>
+          <p *ngIf="!checkingMatchData && profileInfo">
+            Matches played: {{ profileInfo.matches }}
+          </p>
+
+          <button class="btn btn-success my-2" (click)="goToMainPage()">
+            Go to Main Page
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -5,6 +5,7 @@ import prompts from "./prompts.js";
 import fetch from "node-fetch";
 import { v1 } from "@google-cloud/vision";
 import e from "cors";
+import { Matches } from "./models/matches.js";
 
 const ENVIRONMENT = process.env.NODE_ENV;
 const VISION_API_SETTINGS = JSON.parse(process.env.VISION_API_SETTINGS);
@@ -312,7 +313,29 @@ export const setupSocketIO = (server) => {
     }
 
     if (matches[roomId].round === matches[roomId].maxRound) {
-      // TODO: Save game to database
+      const player1 = rooms[roomId]?.players[0]
+        ? Number(rooms[roomId]?.players[0])
+        : null;
+      const player2 = rooms[roomId]?.players[1]
+        ? Number(rooms[roomId]?.players[1])
+        : null;
+      const player3 = rooms[roomId]?.players[2]
+        ? Number(rooms[roomId]?.players[2])
+        : null;
+      const player4 = rooms[roomId]?.players[3]
+        ? Number(rooms[roomId]?.players[3])
+        : null;
+
+      if (player1 !== null && player2 !== null) {
+        Matches.create({
+          playerOneId: player1,
+          playerTwoId: player2,
+          playerThreeId: player3,
+          playerFourId: player4,
+          gameData: matches[roomId],
+        });
+      }
+
       delete matches[roomId];
       transmitRoomData(roomId);
     } else {

@@ -60,6 +60,14 @@
       <button
         *ngIf="hasCredentials"
         [disabled]="checkingAuth"
+        (click)="goToProfile()"
+        class="btn btn-success mx-2"
+      >
+        Go to Profile
+      </button>
+      <button
+        *ngIf="hasCredentials"
+        [disabled]="checkingAuth"
         (click)="logOut()"
         class="btn btn-danger my-2"
       >
