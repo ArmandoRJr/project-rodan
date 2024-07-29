@@ -53,3 +53,9 @@ UI will be developed to showcase game rooms, sprites/icons for Rodan and the pla
 UI will be finalized, with animations for events during the game.
 
 The application will receive Continuous Deployment through a combination of GitHub Actions, Docker and a cloud computing/virtual machine service.
+
+## Final Application
+
+The final application can be found [here](https://rodan.armandorojas.me/) (in https://rodan.armandorojas.me/).
+The presentation can be found in [Youtube](https://youtu.be/ZV89jnsmO_A) (https://youtu.be/ZV89jnsmO_A
+)
